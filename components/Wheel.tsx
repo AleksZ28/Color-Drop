@@ -15,7 +15,7 @@ interface WheelProps {
   transform: any
 }
 
-export default function GameWheel({radius, holeRadius, centerX, centerY, transform}: WheelProps) {
+export default function Wheel({radius, holeRadius, centerX, centerY, transform}: WheelProps) {
 
   const rect = React.useMemo(() => 
     Skia.XYWHRect(
