@@ -4,14 +4,13 @@ import { Skia, Path } from "@shopify/react-native-skia"
 import { SharedValue, useDerivedValue, useSharedValue, withRepeat, withTiming, Easing } from "react-native-reanimated";
 
 interface DropProps {
-  dropX: number;
-  dropY: SharedValue<number>;
-  dropRadius: number;
+    dropX: number;
+    dropY: SharedValue<number>;
+    dropRadius: number;
+    dropColor: string;
 }
 
-const dropColor = "#FF0000"
-
-export default function Drop({dropX, dropY, dropRadius}: DropProps) {
+export default function Drop({dropX, dropY, dropRadius, dropColor}: DropProps) {
 
     const shake = useSharedValue(0);
 
