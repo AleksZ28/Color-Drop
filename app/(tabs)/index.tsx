@@ -2,10 +2,11 @@ import React from "react";
 import { useWindowDimensions } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useDerivedValue, useFrameCallback } from "react-native-reanimated";
-import { Canvas } from "@shopify/react-native-skia";
+import { Canvas, vec } from "@shopify/react-native-skia";
 
-import Wheel from '../../components/Wheel'
-import Drop from '../../components/Drop'
+import Wheel from '@/components/Wheel'
+import Drop from '@/components/Drop'
+import Particle from "@/components/Particle";
 
 export default function Game() {
   const { width, height } = useWindowDimensions();
@@ -44,6 +45,11 @@ export default function Game() {
   const dropX = centerX;
   const dropRadius = 20;
 
+  const splashTrigger = useSharedValue(false);
+  const splashPosition = useSharedValue(vec(0, 0));
+
+  const particles = [...Array(15).keys()];
+
   const panGesture = Gesture.Pan()
     .onStart((e) => {
       startAngle.value = Math.atan2(e.y - centerY, e.x - centerX);
@@ -79,6 +85,12 @@ export default function Game() {
     const hitZoneY = height - size;
 
     if(dropBottom >= hitZoneY){
+
+      splashPosition.value = vec(dropX, hitZoneY);
+      splashTrigger.value = true;
+
+      dropY.value = 0;
+
       buffers.forEach((buffer) => {
         if(buffer.color == dropColor){
           const currentRotationDeg = (rotation.value % (2*Math.PI)) * (180/Math.PI);
@@ -92,7 +104,7 @@ export default function Game() {
           }
         }
       })
-      dropY.value = 0;
+      
 
     }
   })
@@ -115,6 +127,14 @@ export default function Game() {
               dropRadius={dropRadius}
               dropColor={dropColor}
             />
+            {particles.map((i) => (
+              <Particle
+                key={i}
+                position={splashPosition}
+                trigger={splashTrigger}
+                color={dropColor}
+              />
+            ))}
         </Canvas>
         
       </GestureDetector>
