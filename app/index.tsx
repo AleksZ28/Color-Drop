@@ -3,10 +3,18 @@ import { useWindowDimensions } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useDerivedValue, useFrameCallback, withTiming, withSequence, withDelay, useAnimatedStyle } from "react-native-reanimated";
 import { Canvas, vec } from "@shopify/react-native-skia";
+import * as haptics from "expo-haptics";
 
 import Wheel from '@/components/Wheel'
 import Drop from '@/components/Drop'
 import Particle from "@/components/Particle";
+import { scheduleOnRN } from "react-native-worklets";
+
+const triggerHapticWarning = () => {
+  haptics.notificationAsync(
+    haptics.NotificationFeedbackType.Warning
+  );
+};
 
 export default function Game() {
   const { width, height } = useWindowDimensions();
@@ -122,6 +130,7 @@ export default function Game() {
           } else{
             console.log(":(")
             triggerBadHitEffect();
+            scheduleOnRN(triggerHapticWarning);
           }
         }
       })
