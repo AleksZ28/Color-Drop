@@ -1,6 +1,6 @@
 import React from "react"
 
-import { Skia, Path, Circle, Group, vec} from "@shopify/react-native-skia"
+import { Skia, Path, Circle, Group, vec, BlurMask} from "@shopify/react-native-skia"
 
 const red = "#FF0000";
 const yellow = "#FFFF00";
@@ -34,7 +34,7 @@ export default function Wheel({radius, holeRadius, centerX, centerY, transform}:
     const startY = centerY + radius * Math.sin((startAngleDeg * Math.PI) / 180);
 
     p.moveTo(startX, startY);
-    p.addArc(rect,startAngleDeg-0.75,sweepAngleDeg+1.5);
+    p.addArc(rect,startAngleDeg,sweepAngleDeg);
     p.lineTo(centerX, centerY);
     p.close();
     return p;
@@ -49,7 +49,7 @@ export default function Wheel({radius, holeRadius, centerX, centerY, transform}:
     const startY = centerY + radius * Math.sin((startAngleDeg * Math.PI) / 180);
 
     p.moveTo(startX, startY);
-    p.addArc(rect,startAngleDeg-0.75,sweepAngleDeg+1.5);
+    p.addArc(rect,startAngleDeg,sweepAngleDeg);
     p.lineTo(centerX, centerY);
     p.close();
     return p;
@@ -63,7 +63,7 @@ export default function Wheel({radius, holeRadius, centerX, centerY, transform}:
     const startY = centerY + radius * Math.sin((startAngleDeg * Math.PI) / 180);
 
     p.moveTo(startX, startY);
-    p.addArc(rect,startAngleDeg-0.75,sweepAngleDeg+1.5);
+    p.addArc(rect,startAngleDeg,sweepAngleDeg);
     p.lineTo(centerX, centerY);
     p.close();
     return p;
@@ -72,16 +72,48 @@ export default function Wheel({radius, holeRadius, centerX, centerY, transform}:
 
   return (
     <Group origin={vec(centerX, centerY)} transform={transform}>
+      <Group blendMode="colorBurn">
+        <Path
+          path={path1}
+          style="stroke"
+          color={red}
+          strokeWidth={15}
+        >
+          <BlurMask blur={10}/>
+        </Path>
+      </Group>
       <Path
         path={path1}
         style="fill"
         color={red}
       />
+
+      <Group blendMode="colorBurn">
+        <Path
+          path={path2}
+          style="stroke"
+          color={yellow}
+          strokeWidth={15}
+        >
+          <BlurMask blur={10}/>
+        </Path>
+      </Group>
       <Path
         path={path2}
         style="fill"
         color={yellow}
       />
+
+      <Group blendMode="colorBurn">
+        <Path
+          path={path3}
+          style="stroke"
+          color={blue}
+          strokeWidth={15}
+        >
+          <BlurMask blur={10}/>
+        </Path>
+      </Group>
       <Path
         path={path3}
         style="fill"

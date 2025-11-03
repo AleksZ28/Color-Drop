@@ -1,5 +1,5 @@
 import React from "react"
-import { Circle, vec, SkPoint } from "@shopify/react-native-skia" // <-- Import SkPoint
+import { Circle, vec, SkPoint, Group, BlurMask } from "@shopify/react-native-skia"
 import { Easing, interpolate, SharedValue, useAnimatedReaction, useDerivedValue, useSharedValue, withTiming } from "react-native-reanimated";
 
 
@@ -63,11 +63,22 @@ export default function Particle({position, trigger, color}: ParticleProps){
     })
 
     return (
-        <Circle
+        <Group>
+            <Circle
+                c={animatedPosition}
+                r={animatedR}
+                opacity={0.5}
+                color={color}
+            >
+                <BlurMask blur={30}/>
+            </Circle>
+            <Circle
             c={animatedPosition}
             r={animatedR}
             opacity={animatedOpacity}
             color={color}
-        />
+            />
+        </Group>
+        
     )
 }

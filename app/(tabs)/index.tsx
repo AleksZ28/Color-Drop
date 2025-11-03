@@ -10,11 +10,11 @@ import Particle from "@/components/Particle";
 
 export default function Game() {
   const { width, height } = useWindowDimensions();
-  const size = width;
+  const size = width - 40;
   const radius = size / 2;
   const holeRadius = radius / 2;
-  const centerX = size / 2;
-  const centerY = height - radius;
+  const centerX = width / 2;
+  const centerY = height - radius - 20;
 
   const rotation = useSharedValue(0);
   const savedRotation = useSharedValue(0);
@@ -82,7 +82,7 @@ export default function Game() {
     dropY.value += pxToMove;
 
     const dropBottom = dropY.value + dropRadius / 1.5;
-    const hitZoneY = height - size;
+    const hitZoneY = height - size - 20;
 
     if(dropBottom >= hitZoneY){
 
@@ -111,9 +111,9 @@ export default function Game() {
 
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, justifyContent: "flex-end", marginBlockEnd: 10 }}>
+    <GestureHandlerRootView style={{ flex: 1, justifyContent: "flex-end", marginBlockEnd: 10}}>
       <GestureDetector gesture={panGesture}>
-        <Canvas style={{ width: width, height: height }}>
+        <Canvas style={{ width: width, height: height}}>
             <Wheel
               radius={radius}
               holeRadius={holeRadius}
