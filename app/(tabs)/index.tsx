@@ -1,7 +1,7 @@
 import React from "react";
 import { useWindowDimensions } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { useSharedValue, useDerivedValue, useFrameCallback } from "react-native-reanimated";
+import Animated, { useSharedValue, useDerivedValue, useFrameCallback, withTiming, withSequence, withDelay, useAnimatedStyle } from "react-native-reanimated";
 import { Canvas, vec } from "@shopify/react-native-skia";
 
 import Wheel from '@/components/Wheel'
@@ -19,6 +19,9 @@ export default function Game() {
   const rotation = useSharedValue(0);
   const savedRotation = useSharedValue(0);
   const startAngle = useSharedValue(0);
+
+  const shakeX = useSharedValue(0);
+  const shakeY = useSharedValue(0);
 
   let dropColor = "#FF0000"
 
@@ -70,6 +73,24 @@ export default function Game() {
     return [{ rotate: rotation.value }]
   })
 
+  const triggerBadHitEffect = () => {
+    'worklet';
+    shakeX.value = withSequence(
+      withTiming(-10, { duration: 30 }),
+      withTiming(10, { duration: 30 }),
+      withTiming(-10, { duration: 30 }),
+      withTiming(10, { duration: 30 }),
+      withTiming(0, { duration: 30 })
+    );
+    shakeY.value = withSequence(
+      withTiming(5, { duration: 30 }),
+      withTiming(-5, { duration: 30 }),
+      withTiming(5, { duration: 30 }),
+      withTiming(-5, { duration: 30 }),
+      withTiming(0, { duration: 30 })
+    );
+  };
+
   useFrameCallback((frameInfo) => {
     const timeSincePrevFrame = frameInfo.timeSincePreviousFrame;
 
@@ -86,9 +107,6 @@ export default function Game() {
 
     if(dropBottom >= hitZoneY){
 
-      splashPosition.value = vec(dropX, hitZoneY);
-      splashTrigger.value = true;
-
       dropY.value = 0;
 
       buffers.forEach((buffer) => {
@@ -99,21 +117,31 @@ export default function Game() {
 
           if(hitAngleDeg >= buffer.fromAngleDeg && hitAngleDeg <= buffer.toAngleDeg) {
             console.log("OK")
+            splashPosition.value = vec(dropX, hitZoneY);
+            splashTrigger.value = true;
           } else{
             console.log(":(")
+            triggerBadHitEffect();
           }
         }
       })
-      
-
     }
   })
 
+  const shakeAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        { translateX: shakeX.value },
+        { translateY: shakeY.value },
+      ],
+    };
+  });
 
   return (
     <GestureHandlerRootView style={{ flex: 1, justifyContent: "flex-end", marginBlockEnd: 10}}>
-      <GestureDetector gesture={panGesture}>
-        <Canvas style={{ width: width, height: height}}>
+      <Animated.View style={shakeAnimatedStyle}>
+        <GestureDetector gesture={panGesture}>
+          <Canvas style={{ width: width, height: height}}>
             <Wheel
               radius={radius}
               holeRadius={holeRadius}
@@ -135,9 +163,9 @@ export default function Game() {
                 color={dropColor}
               />
             ))}
-        </Canvas>
-        
-      </GestureDetector>
+          </Canvas>
+        </GestureDetector>
+      </Animated.View>
     </GestureHandlerRootView>
   );
 
