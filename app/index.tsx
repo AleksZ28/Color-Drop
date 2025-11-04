@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { StyleSheet, useWindowDimensions } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { useSharedValue, useDerivedValue, useFrameCallback, withTiming, withSequence, withDelay, useAnimatedStyle } from "react-native-reanimated";
+import Animated, { useSharedValue, useDerivedValue, useFrameCallback, withTiming, withSequence, useAnimatedStyle } from "react-native-reanimated";
 import { Canvas, vec } from "@shopify/react-native-skia";
 import * as haptics from "expo-haptics";
 

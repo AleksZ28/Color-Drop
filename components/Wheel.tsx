@@ -1,6 +1,7 @@
 import React from "react"
 
 import { Skia, Path, Circle, Group, vec, BlurMask} from "@shopify/react-native-skia"
+import { DerivedValue, SharedValue } from "react-native-reanimated";
 
 const red = "#FF0000";
 const yellow = "#FFFF00";
@@ -12,7 +13,7 @@ interface WheelProps {
   holeRadius: number
   centerX: number
   centerY: number
-  transform: any
+  transform: SharedValue<{ rotate: number }[]>
 }
 
 export default function Wheel({radius, holeRadius, centerX, centerY, transform}: WheelProps) {
