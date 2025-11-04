@@ -1,5 +1,5 @@
-import React from "react";
-import { useWindowDimensions } from 'react-native';
+import React, { useEffect } from "react";
+import { StyleSheet, useWindowDimensions } from 'react-native';
 import { Gesture, GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { useSharedValue, useDerivedValue, useFrameCallback, withTiming, withSequence, withDelay, useAnimatedStyle } from "react-native-reanimated";
 import { Canvas, vec } from "@shopify/react-native-skia";
@@ -9,6 +9,10 @@ import Wheel from '@/components/Wheel'
 import Drop from '@/components/Drop'
 import Particle from "@/components/Particle";
 import { scheduleOnRN } from "react-native-worklets";
+import ScoreCounter from "@/components/ScoreCounter";
+
+import { Neonderthaw_400Regular, useFonts } from "@expo-google-fonts/neonderthaw"
+
 
 const triggerHapticWarning = () => {
   haptics.notificationAsync(
@@ -16,7 +20,13 @@ const triggerHapticWarning = () => {
   );
 };
 
-export default function Game() {
+const triggerHapticSuccess = () => {
+  haptics.impactAsync(
+    haptics.ImpactFeedbackStyle.Light
+  )
+}
+
+function Game() {
   const { width, height } = useWindowDimensions();
   const size = width - 40;
   const radius = size / 2;
@@ -30,6 +40,15 @@ export default function Game() {
 
   const shakeX = useSharedValue(0);
   const shakeY = useSharedValue(0);
+  
+  const score = useSharedValue(0);
+
+  const [loaded] = useFonts(
+    {
+      Neonderthaw: Neonderthaw_400Regular
+    }
+  )
+
 
   let dropColor = "#FF0000"
 
@@ -125,10 +144,13 @@ export default function Game() {
 
           if(hitAngleDeg >= buffer.fromAngleDeg && hitAngleDeg <= buffer.toAngleDeg) {
             console.log("OK")
+            score.value = score.value + 1;
             splashPosition.value = vec(dropX, hitZoneY);
             splashTrigger.value = true;
+            scheduleOnRN(triggerHapticSuccess);
           } else{
             console.log(":(")
+            score.value = 0; 
             triggerBadHitEffect();
             scheduleOnRN(triggerHapticWarning);
           }
@@ -149,6 +171,7 @@ export default function Game() {
   return (
     <GestureHandlerRootView style={{ flex: 1, justifyContent: "flex-end", marginBlockEnd: 10}}>
       <Animated.View style={shakeAnimatedStyle}>
+        <ScoreCounter score={score} style={styles.score}/>
         <GestureDetector gesture={panGesture}>
           <Canvas style={{ width: width, height: height}}>
             <Wheel
@@ -178,3 +201,20 @@ export default function Game() {
     </GestureHandlerRootView>
   );
 }
+
+const styles = StyleSheet.create({
+    score: {
+      color: "white",
+      position: "absolute",
+      top: "10%",
+      left: 0,
+      right: 0,
+      textAlign: "center",
+      fontSize: 150,
+      fontFamily: "Neonderthaw",
+      textShadowColor: "red",
+      textShadowRadius: 20,
+    }
+  })
+
+export default Game;
