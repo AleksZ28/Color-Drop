@@ -1,22 +1,21 @@
 import React from "react"
 
-import { Skia, Path, Circle, Group, vec, BlurMask} from "@shopify/react-native-skia"
-import { DerivedValue, SharedValue } from "react-native-reanimated";
+import { Skia, Path, Group, vec, BlurMask} from "@shopify/react-native-skia"
+import { SharedValue } from "react-native-reanimated";
 
 const red = "#FF0000";
 const yellow = "#FFFF00";
 const blue = "#0000FF";
-const bgColor = "#222";
+const strokeWidth = 40;
 
 interface WheelProps {
   radius: number
-  holeRadius: number
   centerX: number
   centerY: number
   transform: SharedValue<{ rotate: number }[]>
 }
 
-export default function Wheel({radius, holeRadius, centerX, centerY, transform}: WheelProps) {
+export default function Wheel({radius, centerX, centerY, transform}: WheelProps) {
 
   const rect = React.useMemo(() => 
     Skia.XYWHRect(
@@ -27,48 +26,30 @@ export default function Wheel({radius, holeRadius, centerX, centerY, transform}:
     [centerX, centerY, radius]
   );
 
+  const gap = 5;
+  const sweepAngleDeg = 120 - gap;
+  const start1Deg = gap / 2;
+  const start2Deg = 120 + gap / 2;
+  const start3Deg = 240 + gap / 2;
+
   const path1 = React.useMemo(() => {
     const p = Skia.Path.Make();
-    const startAngleDeg = 0;
-    const sweepAngleDeg = 120;
-    const startX = centerX + radius * Math.cos((startAngleDeg * Math.PI) / 180);
-    const startY = centerY + radius * Math.sin((startAngleDeg * Math.PI) / 180);
-
-    p.moveTo(startX, startY);
-    p.addArc(rect,startAngleDeg,sweepAngleDeg);
-    p.lineTo(centerX, centerY);
-    p.close();
+    p.addArc(rect, start1Deg ,sweepAngleDeg);
     return p;
-  }, [centerX, centerY, radius, rect]);
+  }, [start1Deg, sweepAngleDeg, rect]);
   
 
   const path2 = React.useMemo(() => {
     const p = Skia.Path.Make();
-    const startAngleDeg = 120;
-    const sweepAngleDeg = 120;
-    const startX = centerX + radius * Math.cos((startAngleDeg * Math.PI) / 180);
-    const startY = centerY + radius * Math.sin((startAngleDeg * Math.PI) / 180);
-
-    p.moveTo(startX, startY);
-    p.addArc(rect,startAngleDeg,sweepAngleDeg);
-    p.lineTo(centerX, centerY);
-    p.close();
+    p.addArc(rect, start2Deg ,sweepAngleDeg);
     return p;
-  }, [centerX, centerY, radius, rect]);
+  }, [start2Deg, sweepAngleDeg, rect]);
 
   const path3 = React.useMemo(() => {
     const p = Skia.Path.Make();
-    const startAngleDeg = 240;
-    const sweepAngleDeg = 120;
-    const startX = centerX + radius * Math.cos((startAngleDeg * Math.PI) / 180);
-    const startY = centerY + radius * Math.sin((startAngleDeg * Math.PI) / 180);
-
-    p.moveTo(startX, startY);
-    p.addArc(rect,startAngleDeg,sweepAngleDeg);
-    p.lineTo(centerX, centerY);
-    p.close();
+    p.addArc(rect, start3Deg, sweepAngleDeg);
     return p;
-  }, [centerX, centerY, radius, rect]);
+  }, [start3Deg, sweepAngleDeg, rect]);
 
 
   return (
@@ -78,14 +59,15 @@ export default function Wheel({radius, holeRadius, centerX, centerY, transform}:
           path={path1}
           style="stroke"
           color={red}
-          strokeWidth={15}
+          strokeWidth={strokeWidth}
         >
           <BlurMask blur={10}/>
         </Path>
       </Group>
       <Path
         path={path1}
-        style="fill"
+        style="stroke"
+        strokeWidth={strokeWidth / 1.5}
         color={red}
       />
 
@@ -94,15 +76,16 @@ export default function Wheel({radius, holeRadius, centerX, centerY, transform}:
           path={path2}
           style="stroke"
           color={yellow}
-          strokeWidth={15}
+          strokeWidth={strokeWidth}
         >
           <BlurMask blur={10}/>
         </Path>
       </Group>
       <Path
         path={path2}
-        style="fill"
+        style="stroke"
         color={yellow}
+        strokeWidth={strokeWidth / 1.5}
       />
 
       <Group blendMode="colorBurn">
@@ -110,20 +93,16 @@ export default function Wheel({radius, holeRadius, centerX, centerY, transform}:
           path={path3}
           style="stroke"
           color={blue}
-          strokeWidth={15}
+          strokeWidth={strokeWidth}
         >
           <BlurMask blur={10}/>
         </Path>
       </Group>
       <Path
         path={path3}
-        style="fill"
+        style="stroke"
         color={blue}
-      />
-      <Circle 
-        c={vec(centerX, centerY)} 
-        r={holeRadius} 
-        color={bgColor} 
+        strokeWidth={strokeWidth / 1.5}
       />
     </Group>
   )

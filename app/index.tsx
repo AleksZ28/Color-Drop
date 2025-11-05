@@ -12,6 +12,7 @@ import { scheduleOnRN } from "react-native-worklets";
 import ScoreCounter from "@/components/ScoreCounter";
 
 import { Neonderthaw_400Regular, useFonts } from "@expo-google-fonts/neonderthaw"
+import { Colors } from "@/constants/theme";
 
 
 const triggerHapticWarning = () => {
@@ -28,11 +29,10 @@ const triggerHapticSuccess = () => {
 
 function Game() {
   const { width, height } = useWindowDimensions();
-  const size = width - 40;
+  const size = width - 80;
   const radius = size / 2;
-  const holeRadius = radius / 2;
   const centerX = width / 2;
-  const centerY = height - radius - 20;
+  const centerY = height - radius - 40;
 
   const rotation = useSharedValue(0);
   const savedRotation = useSharedValue(0);
@@ -130,7 +130,7 @@ function Game() {
     dropY.value += pxToMove;
 
     const dropBottom = dropY.value + dropRadius / 1.5;
-    const hitZoneY = height - size - 20;
+    const hitZoneY = centerY - radius - 20 + 2;
 
     if(dropBottom >= hitZoneY){
 
@@ -169,14 +169,13 @@ function Game() {
   });
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, justifyContent: "flex-end", marginBlockEnd: 10}}>
+    <GestureHandlerRootView style={{ flex: 1, justifyContent: "flex-end", marginBlockEnd: 10, backgroundColor: Colors.dark.background}}>
       <Animated.View style={shakeAnimatedStyle}>
         <ScoreCounter score={score} style={styles.score}/>
         <GestureDetector gesture={panGesture}>
           <Canvas style={{ width: width, height: height}}>
             <Wheel
               radius={radius}
-              holeRadius={holeRadius}
               centerX={centerX}
               centerY={centerY}
               transform={transform}
@@ -212,7 +211,7 @@ const styles = StyleSheet.create({
       textAlign: "center",
       fontSize: 150,
       fontFamily: "Neonderthaw",
-      textShadowColor: "red",
+      textShadowColor: "cyan",
       textShadowRadius: 20,
     }
   })
