@@ -6,7 +6,7 @@ import { Easing, interpolate, SharedValue, useAnimatedReaction, useDerivedValue,
 interface ParticleProps{
     position: SharedValue<SkPoint>; 
     trigger: SharedValue<boolean>;
-    color: string;
+    color: SharedValue<string>;
 }
 
 function random(min: number, max: number){
@@ -73,10 +73,10 @@ export default function Particle({position, trigger, color}: ParticleProps){
                 <BlurMask blur={30}/>
             </Circle>
             <Circle
-            c={animatedPosition}
-            r={animatedR}
-            opacity={animatedOpacity}
-            color={color}
+                c={animatedPosition}
+                r={animatedR}
+                opacity={animatedOpacity}
+                color={color}
             />
         </Group>
         

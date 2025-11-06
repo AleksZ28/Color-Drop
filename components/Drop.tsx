@@ -7,7 +7,7 @@ interface DropProps {
     dropX: number;
     dropY: SharedValue<number>;
     dropRadius: number;
-    dropColor: string;
+    dropColor: SharedValue<string>;
 }
 
 export default function Drop({dropX, dropY, dropRadius, dropColor}: DropProps) {

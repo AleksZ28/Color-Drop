@@ -12,13 +12,18 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
     const dropY = useSharedValue(0);
     const dropX = centerX;
     const dropRadius = 20;
-    const dropColor = "#FF0000";
+
+    const dropColors = ["#FF0000", "#FFFF00", "#0000FF"];
+
+    const dropColor = useSharedValue(dropColors[Math.floor(Math.random() * dropColors.length)]);
+    console.log(dropColor);
 
     const shakeX = useSharedValue(0);
     const shakeY = useSharedValue(0);
 
     const splashTrigger = useSharedValue(false);
     const splashPosition = useSharedValue(vec(0, 0));
+    const splashColor = useSharedValue("#FF0000")
 
     const particles = [...Array(15).keys()];
 
@@ -68,7 +73,7 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
         
         clock.value = frameInfo.timeSinceFirstFrame;
     
-        const pxToMove = (200 / 1000) * timeSincePrevFrame;
+        const pxToMove = (333 / 1000) * timeSincePrevFrame;
     
         dropY.value += pxToMove;
     
@@ -79,7 +84,7 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
           dropY.value = 0;
     
           buffers.forEach((buffer) => {
-            if(buffer.color == dropColor){
+            if(buffer.color == dropColor.value){
               const currentRotationDeg = (rotation.value % (2*Math.PI)) * (180/Math.PI);
               const hitAngleDeg = (270 - currentRotationDeg) % 360
               console.log(hitAngleDeg);
@@ -87,6 +92,7 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
               if(hitAngleDeg >= buffer.fromAngleDeg && hitAngleDeg <= buffer.toAngleDeg) {
                 console.log("OK")
                 score.value = score.value + 1;
+                splashColor.value = dropColor.value
                 splashPosition.value = vec(dropX, hitZoneY);
                 splashTrigger.value = true;
                 scheduleOnRN(triggerHapticSuccess);
@@ -98,8 +104,10 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
               }
             }
           })
+
+          dropColor.value = dropColors[Math.floor(Math.random() * dropColors.length)];
         }
     })
 
-    return {score, dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, particles, buffers, triggerBadHitEffect}
+    return {score, dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, buffers, triggerBadHitEffect}
 }

@@ -30,7 +30,7 @@ function Game() {
 
   const clock = useSharedValue(0);
 
-  const {score, dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, particles, buffers} = useGameLoop(rotation, clock);
+  const {score, dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, buffers} = useGameLoop(rotation, clock);
 
   const shakeAnimatedStyle = useShakeEffect(shakeX, shakeY);
 
@@ -59,7 +59,7 @@ function Game() {
                   key={i}
                   position={splashPosition}
                   trigger={splashTrigger}
-                  color={dropColor}
+                  color={splashColor}
                 />
               ))}
             </Canvas>
