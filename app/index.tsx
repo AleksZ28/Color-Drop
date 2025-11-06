@@ -174,34 +174,38 @@ function Game() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1, justifyContent: "flex-end", backgroundColor: Colors.dark.background}}>
-      <Animated.View style={shakeAnimatedStyle}>
-        <ScoreCounter score={score} style={styles.score}/>
-        <GestureDetector gesture={panGesture}>
-          <Canvas style={{ width: width, height: height}}>
-            <AuroraBackground clock={clock}/>
-            <Wheel
-              radius={radius}
-              centerX={centerX}
-              centerY={centerY}
-              transform={transform}
-            />
-            <Drop
-              dropX={dropX}
-              dropY={dropY}
-              dropRadius={dropRadius}
-              dropColor={dropColor}
-            />
-            {particles.map((i) => (
-              <Particle
-                key={i}
-                position={splashPosition}
-                trigger={splashTrigger}
-                color={dropColor}
+      {loaded ? (
+        <Animated.View style={shakeAnimatedStyle}>
+          <ScoreCounter score={score} style={styles.score}/>
+          <GestureDetector gesture={panGesture}>
+            <Canvas style={{ width: width, height: height}}>
+              <AuroraBackground clock={clock}/>
+              <Wheel
+                radius={radius}
+                centerX={centerX}
+                centerY={centerY}
+                transform={transform}
               />
-            ))}
-          </Canvas>
-        </GestureDetector>
-      </Animated.View>
+              <Drop
+                dropX={dropX}
+                dropY={dropY}
+                dropRadius={dropRadius}
+                dropColor={dropColor}
+              />
+              {particles.map((i) => (
+                <Particle
+                  key={i}
+                  position={splashPosition}
+                  trigger={splashTrigger}
+                  color={dropColor}
+                />
+              ))}
+            </Canvas>
+          </GestureDetector>
+        </Animated.View>
+      ) : (
+        <></>
+      )}
     </GestureHandlerRootView>
   );
 }
