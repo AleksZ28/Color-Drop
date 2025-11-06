@@ -1,21 +1,21 @@
-import React from "react";
+import { Canvas } from "@shopify/react-native-skia";
+import React, { useCallback, useState } from "react";
 import { StyleSheet } from 'react-native';
 import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { useSharedValue } from "react-native-reanimated";
-import { Canvas } from "@shopify/react-native-skia";
 
-import Wheel from '@/components/Wheel'
-import Drop from '@/components/Drop'
+import Drop from '@/components/Drop';
 import Particle from "@/components/Particle";
 import ScoreCounter from "@/components/ScoreCounter";
+import Wheel from '@/components/Wheel';
 
-import { Neonderthaw_400Regular, useFonts } from "@expo-google-fonts/neonderthaw"
-import { Colors } from "@/constants/theme";
 import AuroraBackground from "@/components/AuroraBackground";
-import { useWheelGesture } from "@/hooks/useWheelGesture";
+import { Colors } from "@/constants/theme";
 import { useGameDimensions } from "@/hooks/useGameDimensions";
-import { useShakeEffect } from "@/hooks/useShakeEffect";
 import { useGameLoop } from "@/hooks/useGameLoop";
+import { useShakeEffect } from "@/hooks/useShakeEffect";
+import { useWheelGesture } from "@/hooks/useWheelGesture";
+import { Neonderthaw_400Regular, useFonts } from "@expo-google-fonts/neonderthaw";
 
 function Game() {
   const [fontLoaded] = useFonts(
@@ -30,7 +30,17 @@ function Game() {
 
   const clock = useSharedValue(0);
 
-  const {score, dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, buffers} = useGameLoop(rotation, clock);
+  const [score, setScore] = useState(0);
+
+  const onScoreUpdate = useCallback((points: number) => {
+    if(points === 0){
+      setScore(0);
+    } else{
+      setScore((prev) => prev+1)
+    }
+  }, [])
+
+  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, buffers} = useGameLoop(rotation, clock, onScoreUpdate);
 
   const shakeAnimatedStyle = useShakeEffect(shakeX, shakeY);
 
@@ -38,7 +48,7 @@ function Game() {
     <GestureHandlerRootView style={{ flex: 1, justifyContent: "flex-end", backgroundColor: Colors.dark.background}}>
       {fontLoaded ? (
         <Animated.View style={shakeAnimatedStyle}>
-          <ScoreCounter score={score} style={styles.score}/>
+          <ScoreCounter score={score} scoreStyle={styles.score} digitStyle={styles.scoreDigit}/>
           <GestureDetector gesture={panGesture}>
             <Canvas style={{ width: width, height: height}}>
               <AuroraBackground clock={clock}/>
@@ -74,12 +84,16 @@ function Game() {
 
 const styles = StyleSheet.create({
     score: {
-      color: "white",
       position: "absolute",
       top: "10%",
       left: 0,
       right: 0,
-      textAlign: "center",
+      flexDirection: 'row',
+      justifyContent: 'center',
+    },
+
+    scoreDigit: {
+      color: "white",
       fontSize: 150,
       fontFamily: "Neonderthaw",
       textShadowColor: "cyan",

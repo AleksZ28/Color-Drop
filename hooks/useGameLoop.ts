@@ -1,14 +1,13 @@
 import { triggerHapticSuccess, triggerHapticWarning } from "@/utils/haptics";
 import { vec } from "@shopify/react-native-skia";
-import { SharedValue, useFrameCallback, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
+import { runOnJS, SharedValue, useFrameCallback, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { useGameDimensions } from "./useGameDimensions";
 
-export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<number>){
+export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<number>, onScoreUpdate: (points: number) => void){
 
     const {centerX, hitZoneY} = useGameDimensions();
 
-    const score = useSharedValue(0);
     const dropY = useSharedValue(0);
     const dropX = centerX;
     const dropRadius = 20;
@@ -44,6 +43,7 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
           toAngleDeg: 360
         }
     ]
+    
 
     const triggerBadHitEffect = () => {
         'worklet';
@@ -91,14 +91,14 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
     
               if(hitAngleDeg >= buffer.fromAngleDeg && hitAngleDeg <= buffer.toAngleDeg) {
                 console.log("OK")
-                score.value = score.value + 1;
+                runOnJS(onScoreUpdate)(1);
                 splashColor.value = dropColor.value
                 splashPosition.value = vec(dropX, hitZoneY);
                 splashTrigger.value = true;
                 scheduleOnRN(triggerHapticSuccess);
               } else{
                 console.log(":(")
-                score.value = 0; 
+                runOnJS(onScoreUpdate)(0);
                 triggerBadHitEffect();
                 scheduleOnRN(triggerHapticWarning);
               }
@@ -109,5 +109,5 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
         }
     })
 
-    return {score, dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, buffers, triggerBadHitEffect}
+    return {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, buffers, triggerBadHitEffect}
 }
