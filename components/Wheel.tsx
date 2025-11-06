@@ -54,7 +54,7 @@ export default function Wheel({radius, centerX, centerY, transform}: WheelProps)
 
   return (
     <Group origin={vec(centerX, centerY)} transform={transform}>
-      <Group blendMode="colorBurn">
+      <Group>
         <Path
           path={path1}
           style="stroke"
@@ -71,7 +71,7 @@ export default function Wheel({radius, centerX, centerY, transform}: WheelProps)
         color={red}
       />
 
-      <Group blendMode="colorBurn">
+      <Group>
         <Path
           path={path2}
           style="stroke"
@@ -88,7 +88,7 @@ export default function Wheel({radius, centerX, centerY, transform}: WheelProps)
         strokeWidth={strokeWidth / 1.5}
       />
 
-      <Group blendMode="colorBurn">
+      <Group>
         <Path
           path={path3}
           style="stroke"

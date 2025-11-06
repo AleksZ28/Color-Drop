@@ -13,6 +13,7 @@ import ScoreCounter from "@/components/ScoreCounter";
 
 import { Neonderthaw_400Regular, useFonts } from "@expo-google-fonts/neonderthaw"
 import { Colors } from "@/constants/theme";
+import AuroraBackground from "@/components/AuroraBackground";
 
 
 const triggerHapticWarning = () => {
@@ -32,7 +33,7 @@ function Game() {
   const size = width - 80;
   const radius = size / 2;
   const centerX = width / 2;
-  const centerY = height - radius - 40;
+  const centerY = height - radius - 60;
 
   const rotation = useSharedValue(0);
   const savedRotation = useSharedValue(0);
@@ -49,6 +50,7 @@ function Game() {
     }
   )
 
+  const clock = useSharedValue(0);
 
   let dropColor = "#FF0000"
 
@@ -124,6 +126,8 @@ function Game() {
     if(timeSincePrevFrame == null){
       return;
     }
+    
+    clock.value = frameInfo.timeSinceFirstFrame;
 
     const pxToMove = (200 / 1000) * timeSincePrevFrame;
 
@@ -169,11 +173,12 @@ function Game() {
   });
 
   return (
-    <GestureHandlerRootView style={{ flex: 1, justifyContent: "flex-end", marginBlockEnd: 10, backgroundColor: Colors.dark.background}}>
+    <GestureHandlerRootView style={{ flex: 1, justifyContent: "flex-end", backgroundColor: Colors.dark.background}}>
       <Animated.View style={shakeAnimatedStyle}>
         <ScoreCounter score={score} style={styles.score}/>
         <GestureDetector gesture={panGesture}>
           <Canvas style={{ width: width, height: height}}>
+            <AuroraBackground clock={clock}/>
             <Wheel
               radius={radius}
               centerX={centerX}
