@@ -15,7 +15,6 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
     const dropColors = ["#FF0000", "#FFFF00", "#0000FF"];
 
     const dropColor = useSharedValue(dropColors[Math.floor(Math.random() * dropColors.length)]);
-    console.log(dropColor);
 
     const shakeX = useSharedValue(0);
     const shakeY = useSharedValue(0);
@@ -86,10 +85,10 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
           buffers.forEach((buffer) => {
             if(buffer.color == dropColor.value){
               const currentRotationDeg = (rotation.value % (2*Math.PI)) * (180/Math.PI);
-              const hitAngleDeg = (270 - currentRotationDeg) % 360
+              const hitAngleDeg = ((270 - currentRotationDeg) % 360 + 360) % 360
               console.log(hitAngleDeg);
     
-              if(hitAngleDeg >= buffer.fromAngleDeg && hitAngleDeg <= buffer.toAngleDeg) {
+              if(hitAngleDeg >= buffer.fromAngleDeg && hitAngleDeg < buffer.toAngleDeg) {
                 console.log("OK")
                 runOnJS(onScoreUpdate)(1);
                 splashColor.value = dropColor.value

@@ -1,4 +1,4 @@
-import { Canvas } from "@shopify/react-native-skia";
+import { Canvas, center } from "@shopify/react-native-skia";
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from 'react-native';
 import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -98,7 +98,9 @@ const styles = StyleSheet.create({
       fontFamily: "Neonderthaw",
       textShadowColor: "cyan",
       textShadowRadius: 20,
+      minWidth: 112,
+      textAlign: "center",
     }
   })
 
-export default Game;
+export default Game; 

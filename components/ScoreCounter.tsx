@@ -16,7 +16,7 @@ export default function ScoreCounter({score, scoreStyle, digitStyle}: ScoreCount
             {scoreDigits.map((digit, i) => (
                 <Animated.Text
                     key={`${digit}-${i}`}
-                    entering={FadeInDown.duration(300)}
+                    entering={FadeInDown.duration(300).delay(100)}
                     exiting={FadeOutUp.duration(300)}
                     style={digitStyle}
                 >
