@@ -1,10 +1,10 @@
 import { triggerHapticSuccess, triggerHapticWarning } from "@/utils/haptics";
 import { vec } from "@shopify/react-native-skia";
-import { runOnJS, SharedValue, useFrameCallback, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
+import { SharedValue, useFrameCallback, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { useGameDimensions } from "./useGameDimensions";
 
-export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<number>, onScoreUpdate: (points: number) => void){
+export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<number>, score: SharedValue<number>){
 
     const {centerX, hitZoneY} = useGameDimensions();
 
@@ -92,7 +92,7 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
               console.log(hitAngleDeg);
     
               if(hitAngleDeg >= buffer.fromAngleDeg && hitAngleDeg < buffer.toAngleDeg) {
-                runOnJS(onScoreUpdate)(1 * multiplier.value);
+                score.value += 1 * multiplier.value;
                 multiplierGapClock.value += 1;
                 if(multiplierGapClock.value === 3){
                   multiplier.value += 1;
@@ -103,7 +103,7 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
                 splashTrigger.value = true;
                 scheduleOnRN(triggerHapticSuccess);
               } else{
-                runOnJS(onScoreUpdate)(0);
+                score.value = 0;
                 multiplier.value = 1;
                 triggerBadHitEffect();
                 scheduleOnRN(triggerHapticWarning);

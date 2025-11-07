@@ -1,5 +1,5 @@
-import { Canvas, center, size } from "@shopify/react-native-skia";
-import React, { useCallback, useState } from "react";
+import { Canvas } from "@shopify/react-native-skia";
+import React from "react";
 import { StyleSheet } from 'react-native';
 import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { useSharedValue } from "react-native-reanimated";
@@ -31,17 +31,9 @@ function Game() {
 
   const clock = useSharedValue(0);
 
-  const [score, setScore] = useState(0);
+  const score = useSharedValue(0);
 
-  const onScoreUpdate = useCallback((points: number) => {
-    if(points === 0){
-      setScore(0);
-    } else{
-      setScore((prev) => prev+points)
-    }
-  }, [])
-
-  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, onScoreUpdate);
+  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, score);
 
   const shakeAnimatedStyle = useShakeEffect(shakeX, shakeY);
 
@@ -49,7 +41,7 @@ function Game() {
     <GestureHandlerRootView style={{ flex: 1, justifyContent: "flex-end", backgroundColor: Colors.dark.background}}>
       {fontLoaded ? (
         <Animated.View style={shakeAnimatedStyle}>
-          <ScoreCounter score={score} scoreStyle={styles.score} digitStyle={styles.scoreDigit}/>
+          <ScoreCounter score={score} style={styles.score}/>
           <Multiplier multiplier={multiplier} style={[styles.multiplier, {bottom: radius + 50 - 25}]}/>
           <GestureDetector gesture={panGesture}>
             <Canvas style={{ width: width, height: height}}>
@@ -86,22 +78,16 @@ function Game() {
 
 const styles = StyleSheet.create({
     score: {
+      color: "white",
       position: "absolute",
       top: "10%",
       left: 0,
       right: 0,
-      flexDirection: 'row',
-      justifyContent: 'center',
-    },
-
-    scoreDigit: {
-      color: "white",
+      textAlign: "center",
       fontSize: 150,
       fontFamily: "Neonderthaw",
       textShadowColor: "cyan",
       textShadowRadius: 20,
-      minWidth: 112,
-      textAlign: "center",
     },
 
     multiplier: {
