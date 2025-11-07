@@ -42,6 +42,9 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
           toAngleDeg: 360
         }
     ]
+
+    const multiplier = useSharedValue(1);
+    const multiplierGapClock = useSharedValue(0);
     
 
     const triggerBadHitEffect = () => {
@@ -89,15 +92,19 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
               console.log(hitAngleDeg);
     
               if(hitAngleDeg >= buffer.fromAngleDeg && hitAngleDeg < buffer.toAngleDeg) {
-                console.log("OK")
-                runOnJS(onScoreUpdate)(1);
+                runOnJS(onScoreUpdate)(1 * multiplier.value);
+                multiplierGapClock.value += 1;
+                if(multiplierGapClock.value === 3){
+                  multiplier.value += 1;
+                  multiplierGapClock.value = 0;
+                }
                 splashColor.value = dropColor.value
                 splashPosition.value = vec(dropX, hitZoneY);
                 splashTrigger.value = true;
                 scheduleOnRN(triggerHapticSuccess);
               } else{
-                console.log(":(")
                 runOnJS(onScoreUpdate)(0);
+                multiplier.value = 1;
                 triggerBadHitEffect();
                 scheduleOnRN(triggerHapticWarning);
               }
@@ -108,5 +115,5 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
         }
     })
 
-    return {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, buffers, triggerBadHitEffect}
+    return {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, buffers, multiplier, triggerBadHitEffect}
 }

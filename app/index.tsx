@@ -1,4 +1,4 @@
-import { Canvas, center } from "@shopify/react-native-skia";
+import { Canvas, center, size } from "@shopify/react-native-skia";
 import React, { useCallback, useState } from "react";
 import { StyleSheet } from 'react-native';
 import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -16,6 +16,7 @@ import { useGameLoop } from "@/hooks/useGameLoop";
 import { useShakeEffect } from "@/hooks/useShakeEffect";
 import { useWheelGesture } from "@/hooks/useWheelGesture";
 import { Neonderthaw_400Regular, useFonts } from "@expo-google-fonts/neonderthaw";
+import Multiplier from "@/components/Multiplier";
 
 function Game() {
   const [fontLoaded] = useFonts(
@@ -24,7 +25,7 @@ function Game() {
     }
   )
 
-  const {width, height, size, radius, centerX, centerY, hitZoneY} = useGameDimensions();
+  const {width, height, radius, centerX, centerY} = useGameDimensions();
 
   const { panGesture, rotation, transform } = useWheelGesture(centerX, centerY);
 
@@ -36,11 +37,11 @@ function Game() {
     if(points === 0){
       setScore(0);
     } else{
-      setScore((prev) => prev+1)
+      setScore((prev) => prev+points)
     }
   }, [])
 
-  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, buffers} = useGameLoop(rotation, clock, onScoreUpdate);
+  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, onScoreUpdate);
 
   const shakeAnimatedStyle = useShakeEffect(shakeX, shakeY);
 
@@ -49,6 +50,7 @@ function Game() {
       {fontLoaded ? (
         <Animated.View style={shakeAnimatedStyle}>
           <ScoreCounter score={score} scoreStyle={styles.score} digitStyle={styles.scoreDigit}/>
+          <Multiplier multiplier={multiplier} style={[styles.multiplier, {bottom: radius + 50 - 25}]}/>
           <GestureDetector gesture={panGesture}>
             <Canvas style={{ width: width, height: height}}>
               <AuroraBackground clock={clock}/>
@@ -100,7 +102,16 @@ const styles = StyleSheet.create({
       textShadowRadius: 20,
       minWidth: 112,
       textAlign: "center",
+    },
+
+    multiplier: {
+      color: "white",
+      position: "absolute",
+      left: 0,
+      right: 0,
+      textAlign: 'center',
+      fontSize: 50,
     }
-  })
+})
 
 export default Game; 
