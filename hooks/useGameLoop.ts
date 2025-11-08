@@ -80,6 +80,9 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
         );
     };
 
+    let speed = useSharedValue(250);
+    let speedResetDone = useSharedValue(false);
+
     useFrameCallback((frameInfo) => {
         'worklet'
         const timeSincePrevFrame = frameInfo.timeSincePreviousFrame;
@@ -89,8 +92,18 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
         }
         
         clock.value = frameInfo.timeSinceFirstFrame;
-    
-        const pxToMove = (333 / 1000) * timeSincePrevFrame;
+
+        if (score.value >= 100 && !speedResetDone.value) {
+          speed.value = 250;
+          speedResetDone.value = true;
+        } else {
+          if(speedResetDone.value){
+            speed.value = 250 + (score.value) / 4;
+          } else{
+            speed.value = 250 + score.value * 2;
+          }
+        }
+        const pxToMove = (speed.value / 1000) * timeSincePrevFrame;
     
         dropY.value += pxToMove;
     
@@ -141,7 +154,7 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
             }
           })
 
-          if(score.value > 50){
+          if(score.value > 100){
             dropColor.value = dropColors[Math.floor(Math.random() * dropColors.length)];
           } else{
             dropColor.value = dropColors[Math.floor(Math.random() * 3)];
