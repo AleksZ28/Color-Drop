@@ -13,7 +13,7 @@ export default function Multiplier ({multiplier, style}: MultiplierProps){
     const animatedProps = useAnimatedProps(() => {
         return { 
             text: 'x' + String(multiplier.value),
-            defaultValue: String(multiplier.value)
+            defaultValue: 'x' + String(multiplier.value)
         } as any
     });
 

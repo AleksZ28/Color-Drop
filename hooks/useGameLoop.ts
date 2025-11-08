@@ -12,9 +12,9 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
     const dropX = centerX;
     const dropRadius = 20;
 
-    const dropColors = ["#FF0000", "#FFFF00", "#0000FF"];
+    const dropColors = ["#FF0000", "#FFFF00", "#0000FF", "#FF8000", "#00FF00", "#FF00FF"];
 
-    const dropColor = useSharedValue(dropColors[Math.floor(Math.random() * dropColors.length)]);
+    const dropColor = useSharedValue(dropColors[Math.floor(Math.random() * 3)]);
 
     const shakeX = useSharedValue(0);
     const shakeY = useSharedValue(0);
@@ -40,6 +40,21 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
           color: "#0000FF",
           fromAngleDeg: 240,
           toAngleDeg: 360
+        },
+        {
+          color: "#FF8000",
+          fromAngleDeg: 100,
+          toAngleDeg: 140
+        },
+        {
+          color: "#00FF00",
+          fromAngleDeg: 220,
+          toAngleDeg: 260
+        },
+        {
+          color: "#FF00FF",
+          fromAngleDeg: 340,
+          toAngleDeg: 20
         }
     ]
 
@@ -84,14 +99,28 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
         if(dropBottom >= hitZoneY){
     
           dropY.value = 0;
+
+          let correctHit = false;
     
           buffers.forEach((buffer) => {
             if(buffer.color == dropColor.value){
               const currentRotationDeg = (rotation.value % (2*Math.PI)) * (180/Math.PI);
               const hitAngleDeg = ((270 - currentRotationDeg) % 360 + 360) % 360
               console.log(hitAngleDeg);
+
+              const isWrapping = buffer.fromAngleDeg > buffer.toAngleDeg;
+
+              if(!isWrapping){
+                if(hitAngleDeg >= buffer.fromAngleDeg && hitAngleDeg < buffer.toAngleDeg){
+                  correctHit = true;
+                }
+              } else{
+                if (hitAngleDeg >= buffer.fromAngleDeg || hitAngleDeg < buffer.toAngleDeg) {
+                  correctHit = true;
+                }
+              }
     
-              if(hitAngleDeg >= buffer.fromAngleDeg && hitAngleDeg < buffer.toAngleDeg) {
+              if(correctHit) {
                 score.value += 1 * multiplier.value;
                 multiplierGapClock.value += 1;
                 if(multiplierGapClock.value === 3){
@@ -105,13 +134,20 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
               } else{
                 score.value = 0;
                 multiplier.value = 1;
+                multiplierGapClock.value = 0;
                 triggerBadHitEffect();
                 scheduleOnRN(triggerHapticWarning);
               }
             }
           })
 
-          dropColor.value = dropColors[Math.floor(Math.random() * dropColors.length)];
+          if(score.value > 50){
+            dropColor.value = dropColors[Math.floor(Math.random() * dropColors.length)];
+          } else{
+            dropColor.value = dropColors[Math.floor(Math.random() * 3)];
+          }
+
+          
         }
     })
 
