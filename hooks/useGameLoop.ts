@@ -82,7 +82,7 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
         );
     };
 
-    let speed = useSharedValue(250);
+    let speed = useSharedValue(300);
     let speedResetDone = useSharedValue(false);
 
     useFrameCallback((frameInfo) => {
@@ -101,13 +101,13 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
         clock.value = frameInfo.timeSinceFirstFrame;
 
         if (score.value >= 100 && !speedResetDone.value) {
-          speed.value = 250;
+          speed.value = 275;
           speedResetDone.value = true;
         } else {
           if(speedResetDone.value){
-            speed.value = 250 + (score.value) / 4;
+            speed.value = 275 + (score.value) / 4;
           } else{
-            speed.value = 250 + score.value * 2;
+            speed.value = 300 + score.value * 2;
           }
         }
         const pxToMove = (speed.value / 1000) * timeSincePrevFrame;
@@ -153,6 +153,7 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
                 scheduleOnRN(triggerHapticSuccess);
               } else{
                 score.value = 0;
+                speedResetDone.value = false;
                 multiplier.value = 1;
                 multiplierGapClock.value = 0;
                 triggerBadHitEffect();
