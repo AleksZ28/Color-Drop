@@ -46,7 +46,6 @@ export default function ScoreCounter({score, style}: ScoreCounterProps){
     );
 
     const animatedStyle = useAnimatedStyle(() => {
-        'worklet';
         const animatedColor = interpolateColor(
             colorProgress.value,
             [0, 1, 2], 

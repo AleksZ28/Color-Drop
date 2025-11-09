@@ -4,11 +4,13 @@ import { SharedValue, useFrameCallback, useSharedValue, withSequence, withTiming
 import { scheduleOnRN } from "react-native-worklets";
 import { useGameDimensions } from "./useGameDimensions";
 
-export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<number>, score: SharedValue<number>){
+export type GameState = 'MENU' | 'PLAYING' | 'GAME_OVER';
+
+export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<number>, score: SharedValue<number>, gameState: GameState){
 
     const {centerX, hitZoneY} = useGameDimensions();
 
-    const dropY = useSharedValue(0);
+    const dropY = useSharedValue(-50);
     const dropX = centerX;
     const dropRadius = 20;
 
@@ -84,6 +86,11 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
     let speedResetDone = useSharedValue(false);
 
     useFrameCallback((frameInfo) => {
+
+        if (gameState !== 'PLAYING') {
+          return;
+        }
+
         'worklet'
         const timeSincePrevFrame = frameInfo.timeSincePreviousFrame;
     
@@ -111,7 +118,7 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
     
         if(dropBottom >= hitZoneY){
     
-          dropY.value = 0;
+          dropY.value = -50;
 
           let correctHit = false;
     

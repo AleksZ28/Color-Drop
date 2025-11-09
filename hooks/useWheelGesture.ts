@@ -1,7 +1,8 @@
 import { Gesture } from "react-native-gesture-handler";
-import { useDerivedValue, useSharedValue } from "react-native-reanimated";
+import { useDerivedValue, useFrameCallback, useSharedValue } from "react-native-reanimated";
+import { GameState } from "./useGameLoop";
 
-export function useWheelGesture(centerX: number, centerY: number){
+export function useWheelGesture(centerX: number, centerY: number, gameState: GameState){
     const rotation = useSharedValue(0);
     const savedRotation = useSharedValue(0);
     const startAngle = useSharedValue(0);
@@ -10,7 +11,16 @@ export function useWheelGesture(centerX: number, centerY: number){
         return [{ rotate: rotation.value }]
     })
 
+    useFrameCallback(() => {
+        'worklet';
+        if (gameState === 'MENU') {
+            rotation.value += 0.005;
+            savedRotation.value = rotation.value;
+        }
+    });
+
     const panGesture = Gesture.Pan()
+        .enabled(gameState !== "MENU")
         .onStart((e) => {
             'worklet'
             startAngle.value = Math.atan2(e.y - centerY, e.x - centerX);
