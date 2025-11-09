@@ -47,6 +47,6 @@ export function useMenuTransition() {
         };
     })
 
-    return { startGame, wheelPosTransform, titleStyle, startButtonStyle, HUDStyle }
+    return { gameStarted, startGame, wheelPosTransform, titleStyle, startButtonStyle, HUDStyle }
 
 }

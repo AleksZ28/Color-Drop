@@ -1,8 +1,8 @@
 import { Canvas, Group } from "@shopify/react-native-skia";
 import React, { useState } from "react";
-import { Pressable, StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { Easing, Extrapolation, interpolate, useAnimatedStyle, useDerivedValue, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { runOnJS, useAnimatedReaction, useSharedValue } from "react-native-reanimated";
 
 import Drop from '@/components/Drop';
 import Particle from "@/components/Particle";
@@ -19,6 +19,7 @@ import { Neonderthaw_400Regular, useFonts } from "@expo-google-fonts/neonderthaw
 import Multiplier from "@/components/Multiplier";
 import StartButton from "@/components/StartButton";
 import { useMenuTransition } from "@/hooks/useMenuTransition";
+import { scheduleOnRN } from "react-native-worklets";
 
 function Game() {
   const [fontLoaded] = useFonts(
@@ -34,7 +35,7 @@ function Game() {
 
   const { panGesture, rotation, transform } = useWheelGesture(centerX, centerY, gameState);
 
-  const { startGame, wheelPosTransform, titleStyle, startButtonStyle, HUDStyle } = useMenuTransition();
+  const { gameStarted, startGame, wheelPosTransform, titleStyle, startButtonStyle, HUDStyle } = useMenuTransition();
 
   const clock = useSharedValue(0);
 
@@ -45,9 +46,17 @@ function Game() {
   const shakeAnimatedStyle = useShakeEffect(shakeX, shakeY);
 
   const handleStartGame = () => {
-    setGameState('PLAYING');
     startGame();
   };
+
+  useAnimatedReaction(
+    () => gameStarted.value,
+    (currValue, prevValue) => {
+      if (currValue === 1 && prevValue !== 1) {
+        runOnJS(setGameState)('PLAYING');
+      }
+    }
+  );
 
   
   return (
