@@ -73,7 +73,7 @@ function Game() {
           
           <Animated.View style={[styles.hud, HUDStyle]}>
             <ScoreCounter score={score} style={styles.score}/>
-            <Multiplier multiplier={multiplier} style={[styles.multiplier, {top: centerY - radius + 80 }]}/>
+            <Multiplier multiplier={multiplier} style={[styles.multiplier, {top: centerY - radius / 2 + 20 }]}/>
           </Animated.View>
 
           <GestureDetector gesture={panGesture}>
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
     score: {
       color: "white",
       position: "absolute",
-      top: 50,
+      top: 75,
       left: 0,
       right: 0,
       textAlign: "center",

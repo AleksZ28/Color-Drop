@@ -1,7 +1,7 @@
-import { useWindowDimensions } from "react-native";
+import { Dimensions, useWindowDimensions } from "react-native";
 
 export function useGameDimensions(){
-    const { width, height } = useWindowDimensions();
+    const { width, height } = Dimensions.get('screen');
     const size = width - 80;
     const radius = size / 2;
     const centerX = width / 2;
