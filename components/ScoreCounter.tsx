@@ -18,13 +18,8 @@ export default function ScoreCounter({score, style}: ScoreCounterProps){
     const colorProgress = useSharedValue(0);
 
     useAnimatedReaction(
-        () => {
-            'worklet'
-            return score.value;
-        },
+        () => score.value,
         (currentScore, previousScore) => {
-            'worklet'
-            
             if (currentScore > (previousScore ?? 0)) {
                 scale.value = withSequence(
                     withTiming(1.5, { duration: 100 }),

@@ -20,7 +20,7 @@ export function useMenuTransition() {
         const gameY = centerY;
         const currentY = interpolate(gameStarted.value, [0, 1], [menuY, gameY], Extrapolation.CLAMP);
         return [{ translateY: currentY }]
-      })
+    })
     
     const titleStyle = useAnimatedStyle(() => {
         const centerY = insets.top + 50;
