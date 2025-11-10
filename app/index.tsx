@@ -16,15 +16,18 @@ import { useGameLoop } from "@/hooks/useGameLoop";
 import { useShakeEffect } from "@/hooks/useShakeEffect";
 import { useWheelGesture } from "@/hooks/useWheelGesture";
 import { Neonderthaw_400Regular, useFonts } from "@expo-google-fonts/neonderthaw";
+import { TiltNeon_400Regular } from "@expo-google-fonts/tilt-neon";
 import Multiplier from "@/components/Multiplier";
 import StartButton from "@/components/StartButton";
 import { useMenuTransition } from "@/hooks/useMenuTransition";
 import GameOver from "@/components/GameOver";
+import { useNeonFlicker } from "@/hooks/useNeonFlicker";
 
 function Game() {
   const [fontLoaded] = useFonts(
     {
-      Neonderthaw: Neonderthaw_400Regular
+      Neonderthaw: Neonderthaw_400Regular,
+      TiltNeon: TiltNeon_400Regular
     }
   )
 
@@ -53,6 +56,7 @@ function Game() {
   const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, score, onGameOver, gameState);
 
   const shakeAnimatedStyle = useShakeEffect(shakeX, shakeY);
+  const flickerStyle = useNeonFlicker();
 
   const handleStartGame = () => {
     startGame();
@@ -72,7 +76,9 @@ function Game() {
   return (
     <GestureHandlerRootView style={[ styles.container, {backgroundColor: Colors.dark.background}]}>
         
-      <Animated.Text style={[styles.title, titleStyle]}><Text style={styles.titleLeft}>Color</Text> <Text style={styles.titleRight}>Drop</Text></Animated.Text>
+      {fontLoaded && (
+        <Animated.Text style={[styles.title, titleStyle, flickerStyle]}><Text style={[styles.titleLeft]}>Color</Text> <Text style={styles.titleRight}>Drop</Text></Animated.Text>
+      )}
 
       <Animated.View style={[styles.startButtonContainer, startButtonStyle]}>
         <StartButton onPress={handleStartGame} text={'START'}/>
@@ -140,18 +146,21 @@ const styles = StyleSheet.create({
       color: "white",
       zIndex: 20,
       top: 0,
+      fontFamily: 'TiltNeon'
     },
 
     titleLeft: {
       color: "rgba(133, 255, 255, 1)",
       textShadowColor: "rgba(168, 255, 255, 0.75)",
       textShadowRadius: 40,
+      fontFamily: 'TiltNeon'
     },
 
     titleRight: {
       color: "rgba(255, 98, 216, 1)",
       textShadowColor: "rgba(179, 0, 192, 0.75)",
       textShadowRadius: 40,
+      fontFamily: 'TiltNeon'
     },
 
     startButtonContainer: {
