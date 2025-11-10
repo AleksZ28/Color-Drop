@@ -1,4 +1,4 @@
-import { Dimensions, useWindowDimensions } from "react-native";
+import { Dimensions } from "react-native";
 
 export function useGameDimensions(){
     const { width, height } = Dimensions.get('screen');

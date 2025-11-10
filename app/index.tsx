@@ -19,7 +19,7 @@ import { Neonderthaw_400Regular, useFonts } from "@expo-google-fonts/neonderthaw
 import Multiplier from "@/components/Multiplier";
 import StartButton from "@/components/StartButton";
 import { useMenuTransition } from "@/hooks/useMenuTransition";
-import { scheduleOnRN } from "react-native-worklets";
+import GameOver from "@/components/GameOver";
 
 function Game() {
   const [fontLoaded] = useFonts(
@@ -40,8 +40,17 @@ function Game() {
   const clock = useSharedValue(0);
 
   const score = useSharedValue(0);
+  const [highScore, setHighScore] = useState(0);
 
-  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, score, gameState);
+  const onGameOver = (newScore: number) => {
+    if(newScore > highScore){
+      setHighScore(newScore);
+    }
+    setGameState('GAME_OVER');
+    gameStarted.value = 0;
+  }
+
+  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, score, onGameOver, gameState);
 
   const shakeAnimatedStyle = useShakeEffect(shakeX, shakeY);
 
@@ -53,6 +62,7 @@ function Game() {
     () => gameStarted.value,
     (currValue, prevValue) => {
       if (currValue === 1 && prevValue !== 1) {
+        score.value = 0;
         runOnJS(setGameState)('PLAYING');
       }
     }
@@ -61,11 +71,11 @@ function Game() {
   
   return (
     <GestureHandlerRootView style={[ styles.container, {backgroundColor: Colors.dark.background}]}>
-
+        
       <Animated.Text style={[styles.title, titleStyle]}><Text style={styles.titleLeft}>Color</Text> <Text style={styles.titleRight}>Drop</Text></Animated.Text>
 
       <Animated.View style={[styles.startButtonContainer, startButtonStyle]}>
-        <StartButton onPress={handleStartGame}/>
+        <StartButton onPress={handleStartGame} text={'START'}/>
       </Animated.View>
       
       {fontLoaded ? (
@@ -107,6 +117,11 @@ function Game() {
       ) : (
         <></>
       )}
+
+      {gameState === "GAME_OVER" && (
+        <GameOver score={score.value} highScore={highScore} onRestart={handleStartGame}/>
+      )
+      }
     </GestureHandlerRootView>
   );
 }

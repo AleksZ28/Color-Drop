@@ -1,12 +1,12 @@
 import { triggerHapticSuccess, triggerHapticWarning } from "@/utils/haptics";
 import { vec } from "@shopify/react-native-skia";
-import { SharedValue, useFrameCallback, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
+import { runOnJS, SharedValue, useFrameCallback, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { useGameDimensions } from "./useGameDimensions";
 
 export type GameState = 'MENU' | 'PLAYING' | 'GAME_OVER';
 
-export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<number>, score: SharedValue<number>, gameState: GameState){
+export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<number>, score: SharedValue<number>, onGameOver: (finalScore: number) => void, gameState: GameState){
 
     const {centerX, hitZoneY} = useGameDimensions();
 
@@ -82,8 +82,10 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
         );
     };
 
-    let speed = useSharedValue(300);
-    let speedResetDone = useSharedValue(false);
+    const speed = useSharedValue(300);
+    const speedResetDone = useSharedValue(false);
+
+    const lives = useSharedValue(2);
 
     useFrameCallback((frameInfo) => {
 
@@ -152,10 +154,16 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
                 splashTrigger.value = true;
                 scheduleOnRN(triggerHapticSuccess);
               } else{
-                score.value = 0;
-                speedResetDone.value = false;
-                multiplier.value = 1;
-                multiplierGapClock.value = 0;
+                lives.value -= 1;
+
+                if(lives.value === 0){
+                  runOnJS(onGameOver)(score.value);
+                  lives.value = 2;
+                  speedResetDone.value = false;
+                  multiplier.value = 1;
+                  multiplierGapClock.value = 0;
+                }
+                
                 triggerBadHitEffect();
                 scheduleOnRN(triggerHapticWarning);
               }

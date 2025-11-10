@@ -3,9 +3,10 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming } from "react-na
 
 type StartButtonProps = {
     onPress: () => void;
+    text: string;
 };
 
-export default function StartButton({onPress}: StartButtonProps){
+export default function StartButton({onPress, text}: StartButtonProps){
     const buttonScale = useSharedValue(1);
     const buttonBorderColor = useSharedValue('rgba(133, 255, 255, 1)');
     const buttonBackgroundColor = useSharedValue('rgba(0, 255, 255, 0.15)');
@@ -33,7 +34,7 @@ export default function StartButton({onPress}: StartButtonProps){
             onPress={onPress}
         >
             <Animated.View style={[styles.button, animatedButtonStyle]}>
-                <Animated.Text style={styles.buttonText}>START</Animated.Text>
+                <Animated.Text style={styles.buttonText}>{text}</Animated.Text>
             </Animated.View>
         </Pressable>
     )
