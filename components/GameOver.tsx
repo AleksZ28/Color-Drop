@@ -1,36 +1,31 @@
 import { StyleSheet, Text, View } from "react-native";
-import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown } from "react-native-reanimated";
-import { BlurView } from 'expo-blur';
+import Animated, { FadeIn, FadeOut, SharedValue, SlideInDown, SlideOutDown } from "react-native-reanimated";
 import StartButton from '@/components/StartButton'
 
-const AnimatedBlurView = Animated.createAnimatedComponent(BlurView);
-
 interface GameOverMenuProps {
-    score: number;
+    score: SharedValue<number>;
     highScore: number;
     onRestart: () => void;
 }
 
 export default function GameOver({ score, highScore, onRestart }: GameOverMenuProps) {
+
     return (
-        <AnimatedBlurView
-            intensity={20}
-            tint={"dark"}
-            experimentalBlurMethod={"dimezisBlurView"}
-            style={styles.container}
+        <Animated.View
+            style={ styles.container }
             entering={FadeIn.duration(500)}
             exiting={FadeOut.duration(500)}
         >
             <Animated.View
                 style={styles.card}
                 entering={SlideInDown.springify().damping(40)}
-                exiting={SlideOutDown.duration(250)}
+                exiting={SlideOutDown.duration(200)}
             >
                 <Text style={styles.title}>GAME OVER</Text>
                 
                 <View style={styles.scoreContainer}>
                     <Text style={styles.label}>SCORE</Text>
-                    <Text style={styles.score}>{score}</Text>
+                    <Text style={styles.score}>{score.value}</Text>
                 </View>
 
                 <View style={[styles.scoreContainer, {marginBottom: 50}]}>
@@ -40,7 +35,7 @@ export default function GameOver({ score, highScore, onRestart }: GameOverMenuPr
                 
                 <StartButton onPress={onRestart} text="RETRY"/>
             </Animated.View>
-        </AnimatedBlurView>
+        </Animated.View>
     )
 }
 
@@ -50,17 +45,17 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 999,
-        backgroundColor: 'rgba(0,0,0,0.5)'
+        backgroundColor: 'rgba(0,0,0,0.75)'
     },
 
     card: {
-        backgroundColor: 'rgba(0, 0, 0, 0.2)',
+        backgroundColor: 'rgba(10, 10, 10, 1)',
         padding: 30,
         borderRadius: 50,
         alignItems: 'center',
         borderWidth: 4,
-        borderColor: '#ffffffff',
-        boxShadow: '0 0 10px 0 white',
+        borderColor: '#d0f7ff80',
+        boxShadow: '0 0 20px 0 #d0f7ff80',
         width: '80%',
     },
 
@@ -71,7 +66,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         textShadowColor: "#a20000ff",
         textShadowRadius: 15,
-        marginBottom: 30,
+        marginBottom: 20,
     },
 
     scoreContainer: {

@@ -3,6 +3,7 @@ import { vec } from "@shopify/react-native-skia";
 import { runOnJS, SharedValue, useFrameCallback, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { useGameDimensions } from "./useGameDimensions";
+import { useEffect } from "react";
 
 export type GameState = 'MENU' | 'PLAYING' | 'GAME_OVER';
 
@@ -87,7 +88,7 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
 
     const lives = useSharedValue(2);
 
-    useFrameCallback((frameInfo) => {
+    const frameCallback = useFrameCallback((frameInfo) => {
 
         if (gameState !== 'PLAYING') {
           return;
@@ -179,6 +180,10 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
           
         }
     })
+
+    useEffect(() => {
+      frameCallback.setActive(gameState === 'PLAYING');
+    }, [gameState]);
 
     return {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, buffers, multiplier, triggerBadHitEffect}
 }

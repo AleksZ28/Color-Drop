@@ -2,7 +2,7 @@ import { Canvas, Group } from "@shopify/react-native-skia";
 import React, { useState } from "react";
 import { StyleSheet, Text } from 'react-native';
 import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { runOnJS, useAnimatedReaction, useSharedValue } from "react-native-reanimated";
+import Animated, { runOnJS, useAnimatedReaction, useSharedValue, withTiming } from "react-native-reanimated";
 
 import Drop from '@/components/Drop';
 import Particle from "@/components/Particle";
@@ -47,7 +47,7 @@ function Game() {
       setHighScore(newScore);
     }
     setGameState('GAME_OVER');
-    gameStarted.value = 0;
+    gameStarted.value = withTiming(0, { duration: 500 });
   }
 
   const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, score, onGameOver, gameState);
@@ -87,7 +87,7 @@ function Game() {
           </Animated.View>
 
           <GestureDetector gesture={panGesture}>
-            <Canvas style={{ width: width, height: height}}>
+            <Canvas style={{ width: width, height: height }}>
               <AuroraBackground clock={clock}/>
               <Group transform={wheelPosTransform}>
                 <Wheel
@@ -119,7 +119,7 @@ function Game() {
       )}
 
       {gameState === "GAME_OVER" && (
-        <GameOver score={score.value} highScore={highScore} onRestart={handleStartGame}/>
+        <GameOver score={score} highScore={highScore} onRestart={handleStartGame}/>
       )
       }
     </GestureHandlerRootView>

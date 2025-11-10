@@ -13,14 +13,14 @@ export function useWheelGesture(centerX: number, centerY: number, gameState: Gam
 
     useFrameCallback(() => {
         'worklet';
-        if (gameState === 'MENU') {
+        if (gameState !== 'PLAYING') {
             rotation.value += 0.005;
             savedRotation.value = rotation.value;
         }
     });
 
     const panGesture = Gesture.Pan()
-        .enabled(gameState !== "MENU")
+        .enabled(gameState === "PLAYING")
         .onStart((e) => {
             'worklet'
             startAngle.value = Math.atan2(e.y - centerY, e.x - centerX);
