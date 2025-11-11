@@ -22,6 +22,8 @@ import { useWheelGesture } from "@/hooks/useWheelGesture";
 import { getHighScore, storeHighScore } from '@/utils/highScore';
 import { Neonderthaw_400Regular, useFonts } from "@expo-google-fonts/neonderthaw";
 import { TiltNeon_400Regular } from "@expo-google-fonts/tilt-neon";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import TutorialOverlay from "@/components/TutorialOverlay";
 
 
 function Game() {
@@ -34,23 +36,31 @@ function Game() {
   
 
   useEffect(() => {
-    const fetchScore = async () => {
-      const highScoreFromStorage = await getHighScore();
-      setHighScore(highScoreFromStorage);
-    };
+    AsyncStorage.clear();
+    const initApp = async () => {
+      try {
+        const hasPlayed = await AsyncStorage.getItem('has_played_before');
+        if (hasPlayed === null) {
+          setIsTutorialActive(true);
+        }
+        const highScoreFromStorage = await getHighScore();
+        setHighScore(highScoreFromStorage);
+      } catch (e) {
+        console.error(e)
+      }
+    }
 
-    fetchScore();
+    initApp();
   }, [])
 
   type GameState = 'MENU' | 'PLAYING' | 'GAME_OVER';
   const [gameState, setGameState] = useState<GameState>('MENU');
+  const [isTutorialActive, setIsTutorialActive] = useState(false);
 
   const {width, height, radius, centerX, centerY} = useGameDimensions();
-
   const { panGesture, rotation, transform } = useWheelGesture(centerX, centerY, gameState);
-
   const { gameStarted, startGame, wheelPosTransform, titleStyle, startButtonStyle, HUDStyle } = useMenuTransition();
-
+  
   const clock = useSharedValue(0);
 
   const score = useSharedValue(0);
@@ -65,7 +75,12 @@ function Game() {
     gameStarted.value = withTiming(0, { duration: 500 });
   }, [highScore, storeHighScore, gameStarted])
 
-  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, score, onGameOver, gameState);
+  const handleSetIsTutorialActive = () => {
+    setIsTutorialActive(false);
+    AsyncStorage.setItem('has_played_before', 'true');
+  }
+
+  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, score, onGameOver, gameState, isTutorialActive, handleSetIsTutorialActive);
 
   const shakeAnimatedStyle = useShakeEffect(shakeX, shakeY);
   const flickerStyle = useNeonFlicker();
@@ -134,6 +149,10 @@ function Game() {
         </Animated.View>
       ) : (
         <></>
+      )}
+
+      {isTutorialActive && gameState === 'PLAYING' && (
+        <TutorialOverlay score={score}/>
       )}
 
       {gameState === "GAME_OVER" && (

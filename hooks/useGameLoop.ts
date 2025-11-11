@@ -7,7 +7,51 @@ import { useEffect } from "react";
 
 export type GameState = 'MENU' | 'PLAYING' | 'GAME_OVER';
 
-export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<number>, score: SharedValue<number>, onGameOver: (finalScore: number) => void, gameState: GameState){
+const dropColors = ["#FF0000", "#FFFF00", "#0000FF", "#FF8000", "#00FF00", "#FF00FF"];
+
+const tutorialSequence = ["#FF0000", "#FFFF00", "#FF8000", "#0000FF"];
+
+const buffers = [
+  {
+    color: "#FF0000",
+    fromAngleDeg: 0,
+    toAngleDeg: 120
+  },
+  {
+    color: "#FFFF00",
+    fromAngleDeg: 120,
+    toAngleDeg: 240
+  },
+  {
+    color: "#0000FF",
+    fromAngleDeg: 240,
+    toAngleDeg: 360
+  },
+  {
+    color: "#FF8000",
+    fromAngleDeg: 100,
+    toAngleDeg: 140
+  },
+  {
+    color: "#00FF00",
+    fromAngleDeg: 220,
+    toAngleDeg: 260
+  },
+  {
+    color: "#FF00FF",
+    fromAngleDeg: 340,
+    toAngleDeg: 20
+  }
+  ]
+
+export function useGameLoop(
+    rotation: SharedValue<number>,
+    clock: SharedValue<number>,
+    score: SharedValue<number>,
+    onGameOver: (finalScore: number) => void,
+    gameState: GameState, isTutorialActive: boolean,
+    onTutorialComplete: () => void
+  ){
 
     const {centerX, hitZoneY} = useGameDimensions();
 
@@ -15,9 +59,14 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
     const dropX = centerX;
     const dropRadius = 20;
 
-    const dropColors = ["#FF0000", "#FFFF00", "#0000FF", "#FF8000", "#00FF00", "#FF00FF"];
+    const dropColor = useSharedValue(isTutorialActive ? tutorialSequence[0] : dropColors[Math.floor(Math.random() * 3)]);
 
-    const dropColor = useSharedValue(dropColors[Math.floor(Math.random() * 3)]);
+    useEffect(() => {
+      if (gameState === 'PLAYING' && isTutorialActive) {
+        dropColor.value = tutorialSequence[0];
+        dropY.value = -50;
+      }
+    }, [gameState,isTutorialActive]);
 
     const shakeX = useSharedValue(0);
     const shakeY = useSharedValue(0);
@@ -28,61 +77,29 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
 
     const particles = [...Array(15).keys()];
 
-    const buffers = [
-        {
-          color: "#FF0000",
-          fromAngleDeg: 0,
-          toAngleDeg: 120
-        },
-        {
-          color: "#FFFF00",
-          fromAngleDeg: 120,
-          toAngleDeg: 240
-        },
-        {
-          color: "#0000FF",
-          fromAngleDeg: 240,
-          toAngleDeg: 360
-        },
-        {
-          color: "#FF8000",
-          fromAngleDeg: 100,
-          toAngleDeg: 140
-        },
-        {
-          color: "#00FF00",
-          fromAngleDeg: 220,
-          toAngleDeg: 260
-        },
-        {
-          color: "#FF00FF",
-          fromAngleDeg: 340,
-          toAngleDeg: 20
-        }
-    ]
-
     const multiplier = useSharedValue(1);
     const multiplierGapClock = useSharedValue(0);
     
 
     const triggerBadHitEffect = () => {
-        'worklet';
-        shakeX.value = withSequence(
-          withTiming(-10, { duration: 30 }),
-          withTiming(10, { duration: 30 }),
-          withTiming(-10, { duration: 30 }),
-          withTiming(10, { duration: 30 }),
-          withTiming(0, { duration: 30 })
-        );
-        shakeY.value = withSequence(
-          withTiming(5, { duration: 30 }),
-          withTiming(-5, { duration: 30 }),
-          withTiming(5, { duration: 30 }),
-          withTiming(-5, { duration: 30 }),
-          withTiming(0, { duration: 30 })
-        );
+      'worklet';
+      shakeX.value = withSequence(
+        withTiming(-10, { duration: 30 }),
+        withTiming(10, { duration: 30 }),
+        withTiming(-10, { duration: 30 }),
+        withTiming(10, { duration: 30 }),
+        withTiming(0, { duration: 30 })
+      );
+      shakeY.value = withSequence(
+        withTiming(5, { duration: 30 }),
+        withTiming(-5, { duration: 30 }),
+        withTiming(5, { duration: 30 }),
+        withTiming(-5, { duration: 30 }),
+        withTiming(0, { duration: 30 })
+      );
     };
 
+    const baseSpeed = useSharedValue(300)
     const speed = useSharedValue(300);
     const speedResetDone = useSharedValue(false);
 
@@ -92,6 +109,16 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
 
         if (gameState !== 'PLAYING') {
           return;
+        }
+
+        if (isTutorialActive){
+          if(score.value >= 2){
+            baseSpeed.value = 60;
+          } else{
+            baseSpeed.value = 100;
+          }
+        } else{
+          baseSpeed.value = 300;
         }
 
         'worklet'
@@ -104,13 +131,13 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
         clock.value = frameInfo.timeSinceFirstFrame;
 
         if (score.value >= 100 && !speedResetDone.value) {
-          speed.value = 275;
+          speed.value = baseSpeed.value - 25;
           speedResetDone.value = true;
         } else {
           if(speedResetDone.value){
-            speed.value = 275 + (score.value) / 4;
+            speed.value = baseSpeed.value - 25 + (score.value) / 4;
           } else{
-            speed.value = 300 + score.value * 2;
+            speed.value = baseSpeed.value + score.value * 2;
           }
         }
         const pxToMove = (speed.value / 1000) * timeSincePrevFrame;
@@ -171,13 +198,21 @@ export function useGameLoop(rotation: SharedValue<number>, clock: SharedValue<nu
             }
           })
 
-          if(score.value > 100){
-            dropColor.value = dropColors[Math.floor(Math.random() * dropColors.length)];
+          if(isTutorialActive){
+            const nextDropIndex = score.value;
+            if(nextDropIndex < tutorialSequence.length) {
+              dropColor.value = tutorialSequence[nextDropIndex];
+            } else {
+              dropColor.value = dropColors[Math.floor(Math.random() * 3)];
+              runOnJS(onTutorialComplete)();
+            }
           } else{
-            dropColor.value = dropColors[Math.floor(Math.random() * 3)];
+            if(score.value > 100){
+              dropColor.value = dropColors[Math.floor(Math.random() * dropColors.length)];
+            } else{
+              dropColor.value = dropColors[Math.floor(Math.random() * 3)];
+            }
           }
-
-          
         }
     })
 
