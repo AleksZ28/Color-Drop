@@ -1,5 +1,5 @@
 import { Canvas, Group } from "@shopify/react-native-skia";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text } from 'react-native';
 import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { runOnJS, useAnimatedReaction, useSharedValue, withTiming } from "react-native-reanimated";
@@ -10,18 +10,20 @@ import ScoreCounter from "@/components/ScoreCounter";
 import Wheel from '@/components/Wheel';
 
 import AuroraBackground from "@/components/AuroraBackground";
+import GameOver from "@/components/GameOver";
+import Multiplier from "@/components/Multiplier";
+import StartButton from "@/components/StartButton";
 import { Colors } from "@/constants/theme";
 import { useGameDimensions } from "@/hooks/useGameDimensions";
 import { useGameLoop } from "@/hooks/useGameLoop";
+import { useMenuTransition } from "@/hooks/useMenuTransition";
+import { useNeonFlicker } from "@/hooks/useNeonFlicker";
 import { useShakeEffect } from "@/hooks/useShakeEffect";
 import { useWheelGesture } from "@/hooks/useWheelGesture";
+import { getHighScore, storeHighScore } from '@/utils/highScore';
 import { Neonderthaw_400Regular, useFonts } from "@expo-google-fonts/neonderthaw";
 import { TiltNeon_400Regular } from "@expo-google-fonts/tilt-neon";
-import Multiplier from "@/components/Multiplier";
-import StartButton from "@/components/StartButton";
-import { useMenuTransition } from "@/hooks/useMenuTransition";
-import GameOver from "@/components/GameOver";
-import { useNeonFlicker } from "@/hooks/useNeonFlicker";
+
 
 function Game() {
   const [fontLoaded] = useFonts(
@@ -30,6 +32,17 @@ function Game() {
       TiltNeon: TiltNeon_400Regular
     }
   )
+  
+
+  useEffect(() => {
+    const fetchScore = async () => {
+      const highScoreFromStorage = await getHighScore();
+      setHighScore(highScoreFromStorage);
+    };
+
+    fetchScore();
+  }, [])
+  
 
   type GameState = 'MENU' | 'PLAYING' | 'GAME_OVER';
   const [gameState, setGameState] = useState<GameState>('MENU');
@@ -45,13 +58,14 @@ function Game() {
   const score = useSharedValue(0);
   const [highScore, setHighScore] = useState(0);
 
-  const onGameOver = (newScore: number) => {
+  const onGameOver = useCallback((newScore: number) => {
     if(newScore > highScore){
       setHighScore(newScore);
+      storeHighScore(newScore);
     }
     setGameState('GAME_OVER');
     gameStarted.value = withTiming(0, { duration: 500 });
-  }
+  }, [highScore, storeHighScore, gameStarted])
 
   const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, score, onGameOver, gameState);
 
