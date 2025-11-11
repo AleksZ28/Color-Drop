@@ -13,7 +13,6 @@ import AuroraBackground from "@/components/AuroraBackground";
 import GameOver from "@/components/GameOver";
 import Multiplier from "@/components/Multiplier";
 import StartButton from "@/components/StartButton";
-import { Colors } from "@/constants/theme";
 import { useGameDimensions } from "@/hooks/useGameDimensions";
 import { useGameLoop } from "@/hooks/useGameLoop";
 import { useMenuTransition } from "@/hooks/useMenuTransition";
@@ -42,7 +41,6 @@ function Game() {
 
     fetchScore();
   }, [])
-  
 
   type GameState = 'MENU' | 'PLAYING' | 'GAME_OVER';
   const [gameState, setGameState] = useState<GameState>('MENU');
@@ -88,7 +86,7 @@ function Game() {
 
   
   return (
-    <GestureHandlerRootView style={[ styles.container, {backgroundColor: Colors.dark.background}]}>
+    <GestureHandlerRootView style={[ styles.container, {backgroundColor: "#20202aff"}]}>
         
       {fontLoaded && (
         <Animated.Text style={[styles.title, titleStyle, flickerStyle]}><Text style={[styles.titleLeft]}>Color</Text> <Text style={styles.titleRight}>Drop</Text></Animated.Text>
