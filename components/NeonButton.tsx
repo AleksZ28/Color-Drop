@@ -6,7 +6,7 @@ type StartButtonProps = {
     text: string;
 };
 
-export default function StartButton({onPress, text}: StartButtonProps){
+export default function NeonButton({onPress, text}: StartButtonProps){
     const buttonScale = useSharedValue(1);
     const buttonBorderColor = useSharedValue('rgba(133, 255, 255, 1)');
     const buttonBackgroundColor = useSharedValue('rgba(0, 255, 255, 0.15)');

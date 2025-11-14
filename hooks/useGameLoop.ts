@@ -77,6 +77,9 @@ export function useGameLoop(
         multiplier.value = 1;
         multiplierGapClock.value = 0;
         dropY.value = -50;
+        frameCallback.setActive(true);
+      } else{
+        frameCallback.setActive(false);
       }
 
     }, [gameState]);
@@ -225,10 +228,6 @@ export function useGameLoop(
           }
         }
     })
-
-    useEffect(() => {
-      frameCallback.setActive(gameState === 'PLAYING');
-    }, [gameState]);
 
     return {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, buffers, multiplier, triggerBadHitEffect}
 } 

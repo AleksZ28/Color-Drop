@@ -1,4 +1,5 @@
-import StartButton from '@/components/StartButton';
+import NeonButton from '@/components/NeonButton';
+import StartButton from '@/components/NeonButton';
 import { useNeonFlicker } from '@/hooks/useNeonFlicker';
 import { StyleSheet, Text, View } from "react-native";
 import Animated, { FadeIn, FadeOut, SharedValue, SlideInDown, SlideOutDown } from "react-native-reanimated";
@@ -6,10 +7,10 @@ import Animated, { FadeIn, FadeOut, SharedValue, SlideInDown, SlideOutDown } fro
 interface GameOverMenuProps {
     score: SharedValue<number>;
     highScore: number;
-    onRestart: () => void;
+    showMenu: () => void;
 }
 
-export default function GameOver({ score, highScore, onRestart }: GameOverMenuProps) {
+export default function GameOver({ score, highScore, showMenu }: GameOverMenuProps) {
 
     const flickerStyle = useNeonFlicker();
 
@@ -36,7 +37,7 @@ export default function GameOver({ score, highScore, onRestart }: GameOverMenuPr
                     <Text style={styles.highScore}>{highScore}</Text>
                 </View>
                 
-                <StartButton onPress={onRestart} text="RETRY"/>
+                <NeonButton onPress={showMenu} text="HOME"/>
             </Animated.View>
         </Animated.View>
     )

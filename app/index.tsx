@@ -12,7 +12,7 @@ import Wheel from '@/components/Wheel';
 import AuroraBackground from "@/components/AuroraBackground";
 import GameOver from "@/components/GameOver";
 import Multiplier from "@/components/Multiplier";
-import StartButton from "@/components/StartButton";
+import StartButton from "@/components/NeonButton";
 import { useGameDimensions } from "@/hooks/useGameDimensions";
 import { useGameLoop } from "@/hooks/useGameLoop";
 import { useMenuTransition } from "@/hooks/useMenuTransition";
@@ -24,6 +24,7 @@ import { Neonderthaw_400Regular, useFonts } from "@expo-google-fonts/neonderthaw
 import { TiltNeon_400Regular } from "@expo-google-fonts/tilt-neon";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TutorialOverlay from "@/components/TutorialOverlay";
+import NeonButton from "@/components/NeonButton";
 
 
 function Game() {
@@ -95,8 +96,14 @@ function Game() {
   const flickerStyle = useNeonFlicker();
 
   const handleStartGame = () => {
+    score.value = 0;
+    multiplier.value = 1;
     startGame();
   };
+
+  const showMenu = () => {
+    setGameState('MENU');
+  }
 
   useAnimatedReaction(
     () => gameStarted.value,
@@ -117,7 +124,7 @@ function Game() {
       )}
 
       <Animated.View style={[styles.startButtonContainer, startButtonStyle]}>
-        <StartButton onPress={handleStartGame} text={'START'}/>
+        <NeonButton onPress={handleStartGame} text={'START'}/>
       </Animated.View>
       
       {fontLoaded ? (
@@ -165,7 +172,7 @@ function Game() {
       )}
 
       {gameState === "GAME_OVER" && (
-        <GameOver score={score} highScore={highScore} onRestart={handleStartGame}/>
+        <GameOver score={score} highScore={highScore} showMenu={showMenu}/>
       )
       }
     </GestureHandlerRootView>
