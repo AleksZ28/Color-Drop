@@ -138,7 +138,7 @@ export function useGameLoop(
           return;
         }
         
-        clock.value = frameInfo.timeSinceFirstFrame;
+        clock.value += frameInfo.timeSincePreviousFrame ?? frameInfo.timeSinceFirstFrame;
 
         if (score.value >= 100 && !speedResetDone.value) {
           speed.value = baseSpeed.value - 25;
