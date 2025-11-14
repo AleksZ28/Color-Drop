@@ -36,7 +36,7 @@ function Game() {
   
 
   useEffect(() => {
-    AsyncStorage.clear();
+    // AsyncStorage.clear();
     const initApp = async () => {
       try {
         const hasPlayed = await AsyncStorage.getItem('has_played_before');
@@ -125,7 +125,7 @@ function Game() {
           
           <Animated.View style={[styles.hud, HUDStyle]}>
             <ScoreCounter score={score} style={styles.score}/>
-            <Multiplier multiplier={multiplier} style={[styles.multiplier, {top: centerY - radius / 2 + 20 }]}/>
+            <Multiplier multiplier={multiplier} style={[styles.multiplier, {top: centerY - radius / 2 + 10 }]}/>
           </Animated.View>
 
           <GestureDetector gesture={panGesture}>
@@ -182,7 +182,6 @@ const styles = StyleSheet.create({
       textAlign: 'center',
       width: "100%",
       fontSize: 60,
-      fontWeight: "bold",
       color: "white",
       zIndex: 20,
       top: 0,
@@ -235,6 +234,7 @@ const styles = StyleSheet.create({
       right: 0,
       textAlign: 'center',
       fontSize: 50,
+      fontFamily: "TiltNeon"
     }
 })
 

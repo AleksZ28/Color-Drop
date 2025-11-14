@@ -64,13 +64,14 @@ const styles = StyleSheet.create({
 
     title: {
         fontSize: 60,
-        fontWeight: "bold",
+        fontFamily: "TiltNeon",
         color: "#FF0000",
         textAlign: "center",
         textShadowColor: "#a20000ff",
         textShadowRadius: 15,
         marginBottom: 20,
-        letterSpacing: 4
+        letterSpacing: 4,
+        lineHeight: 60
     },
 
     scoreContainer: {
