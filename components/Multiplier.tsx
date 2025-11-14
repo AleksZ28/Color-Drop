@@ -1,5 +1,5 @@
 import { TextInput, TextStyle } from "react-native";
-import Animated, { interpolateColor, SharedValue, useAnimatedProps, useAnimatedReaction, useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
+import Animated, { interpolateColor, SharedValue, useAnimatedProps, useAnimatedReaction, useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from "react-native-reanimated";
 
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
@@ -13,12 +13,18 @@ const highlightColor = "#75dd8dff"
 
 export default function Multiplier ({multiplier, style}: MultiplierProps){
 
+    const scale = useSharedValue(1);
     const colorProgress = useSharedValue(0);
 
     useAnimatedReaction(
         () => multiplier.value,
         (currMultip, prevMultip) => {
             if(currMultip !== prevMultip) {
+                scale.value = withSequence(
+                    withTiming(1.3, { duration: 100 }),
+                    withSpring(1)
+                )
+
                 colorProgress.value = withSequence(
                     withTiming(1, { duration: 100 }),
                     withTiming(0, { duration: 200 })
@@ -36,6 +42,7 @@ export default function Multiplier ({multiplier, style}: MultiplierProps){
         )
 
         return{
+            transform: [{ scale: scale.value }],
             color: animatedColor
         }
     })

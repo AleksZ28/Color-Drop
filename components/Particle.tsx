@@ -30,7 +30,7 @@ export default function Particle({position, trigger, color}: ParticleProps){
                 startY.value = position.value.y;
 
                 endX.value = startX.value + random(-75, 75);
-                endY.value = startY.value + random(-50, -10);
+                endY.value = startY.value + random(-65, -10);
 
                 progress.value = withTiming(
                     1,
