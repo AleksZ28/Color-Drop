@@ -1,9 +1,10 @@
-import { useState } from "react";
 import { StyleSheet, Text } from "react-native";
-import Animated, { FadeIn, FadeOut, runOnJS, SharedValue, useAnimatedReaction } from "react-native-reanimated";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, { FadeIn, FadeOut, runOnJS } from "react-native-reanimated";
 
 interface TutorialOverlayProps {
-  score: SharedValue<number>;
+    onHide: () => void,
+    step: number
 }
 
 const steps: { [key: number]: string } = {
@@ -13,36 +14,39 @@ const steps: { [key: number]: string } = {
     3: "Dobra robota! Gra z czasem będzie przyspieszać, a mieszanie kolorów rozpocznie się po przekroczeniu 100 pkt."
 }
 
-export default function TutorialOverlay({ score }: TutorialOverlayProps) {
+export default function TutorialOverlay({ onHide, step }: TutorialOverlayProps) {
 
-    const [hint, setHint] = useState(steps[0]);
+    const tapGesture = Gesture.Tap()
+        .onEnd(() => {
+            'worklet'
+            runOnJS(onHide)();
+        })
 
-    useAnimatedReaction(
-        () => score.value,
-        (currScore, prevScore) => {
-            'worklet';
-            if (currScore !== prevScore){
-                runOnJS(setHint)(steps[currScore]);
-            }
-        },
-        [score]
-    )
+    function getHint(step: number){
+        return steps[step] ?? "";
+    }
+
 
     return (
-        <Animated.View key={hint} style={styles.container} entering={FadeIn} exiting={FadeOut}>
-            <Text style={styles.text}>{hint}</Text>
-        </Animated.View>
+        <GestureDetector gesture={tapGesture}>
+            <Animated.View key={step} style={styles.container} entering={FadeIn} exiting={FadeOut}>
+                <Text style={styles.text}>{getHint(step)}</Text>
+            </Animated.View>
+        </GestureDetector>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
         position: 'absolute',
-        top: '20%',
-        left: '10%',
-        right: '10%',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
         alignItems: 'center',
+        justifyContent: 'center',
         zIndex: 100,
+        backgroundColor: 'rgba(0,0,0,0.6)'
     },
 
     text: {
@@ -51,8 +55,5 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         fontWeight: "bold",
         padding: 20,
-        backgroundColor: 'rgba(0,0,0,0.4)',
-        borderRadius: 20,
-        boxShadow: "0 0 10px 0 rgba(0,0,0,0.5)"
     }
 })

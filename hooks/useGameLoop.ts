@@ -50,7 +50,9 @@ export function useGameLoop(
     score: SharedValue<number>,
     onGameOver: (finalScore: number) => void,
     gameState: GameState, isTutorialActive: boolean,
-    onTutorialComplete: () => void
+    onTutorialComplete: () => void,
+    onTutorialStep: () => void,
+    isPaused: boolean,
   ){
 
     const {centerX, hitZoneY} = useGameDimensions();
@@ -62,11 +64,22 @@ export function useGameLoop(
     const dropColor = useSharedValue(isTutorialActive ? tutorialSequence[0] : dropColors[Math.floor(Math.random() * 3)]);
 
     useEffect(() => {
-      if (gameState === 'PLAYING' && isTutorialActive) {
-        dropColor.value = tutorialSequence[0];
+      if (gameState === 'PLAYING') {
+        if (isTutorialActive){
+          dropColor.value = tutorialSequence[0];
+        } else {
+          dropColor.value = dropColors[Math.floor(Math.random() * 3)];
+        }
+
+        score.value = 0;
+        lives.value = 2;
+        speedResetDone.value = false;
+        multiplier.value = 1;
+        multiplierGapClock.value = 0;
         dropY.value = -50;
       }
-    }, [gameState,isTutorialActive]);
+
+    }, [gameState]);
 
     const shakeX = useSharedValue(0);
     const shakeY = useSharedValue(0);
@@ -107,21 +120,18 @@ export function useGameLoop(
 
     const frameCallback = useFrameCallback((frameInfo) => {
 
-        if (gameState !== 'PLAYING') {
+        'worklet'
+
+        if (gameState !== 'PLAYING' || isPaused) {
           return;
         }
 
         if (isTutorialActive){
-          if(score.value >= 2){
-            baseSpeed.value = 60;
-          } else{
-            baseSpeed.value = 100;
-          }
+          baseSpeed.value = 150;
         } else{
           baseSpeed.value = 300;
         }
 
-        'worklet'
         const timeSincePrevFrame = frameInfo.timeSincePreviousFrame;
     
         if(timeSincePrevFrame == null){
@@ -140,6 +150,9 @@ export function useGameLoop(
             speed.value = baseSpeed.value + score.value * 2;
           }
         }
+
+        console.log(speed.value);
+
         const pxToMove = (speed.value / 1000) * timeSincePrevFrame;
     
         dropY.value += pxToMove;
@@ -156,7 +169,7 @@ export function useGameLoop(
             if(buffer.color == dropColor.value){
               const currentRotationDeg = (rotation.value % (2*Math.PI)) * (180/Math.PI);
               const hitAngleDeg = ((270 - currentRotationDeg) % 360 + 360) % 360
-              console.log(hitAngleDeg);
+              // console.log(hitAngleDeg);
 
               const isWrapping = buffer.fromAngleDeg > buffer.toAngleDeg;
 
@@ -186,10 +199,6 @@ export function useGameLoop(
 
                 if(lives.value === 0){
                   runOnJS(onGameOver)(score.value);
-                  lives.value = 2;
-                  speedResetDone.value = false;
-                  multiplier.value = 1;
-                  multiplierGapClock.value = 0;
                 }
                 
                 triggerBadHitEffect();
@@ -202,6 +211,7 @@ export function useGameLoop(
             const nextDropIndex = score.value;
             if(nextDropIndex < tutorialSequence.length) {
               dropColor.value = tutorialSequence[nextDropIndex];
+              runOnJS(onTutorialStep)();
             } else {
               dropColor.value = dropColors[Math.floor(Math.random() * 3)];
               runOnJS(onTutorialComplete)();
@@ -221,4 +231,4 @@ export function useGameLoop(
     }, [gameState]);
 
     return {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, buffers, multiplier, triggerBadHitEffect}
-}
+} 

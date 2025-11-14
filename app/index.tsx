@@ -36,12 +36,13 @@ function Game() {
   
 
   useEffect(() => {
-    AsyncStorage.clear();
+    // AsyncStorage.clear();
     const initApp = async () => {
       try {
         const hasPlayed = await AsyncStorage.getItem('has_played_before');
         if (hasPlayed === null) {
           setIsTutorialActive(true);
+          setIsPaused(true)
         }
         const highScoreFromStorage = await getHighScore();
         setHighScore(highScoreFromStorage);
@@ -56,6 +57,14 @@ function Game() {
   type GameState = 'MENU' | 'PLAYING' | 'GAME_OVER';
   const [gameState, setGameState] = useState<GameState>('MENU');
   const [isTutorialActive, setIsTutorialActive] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [tutorialStep, setTutorialStep] = useState(0);
+
+  const handleTutorialStep = () => {
+    setTutorialStep(prev => prev + 1);
+    setIsTutorialActive(true);
+    setIsPaused(true);
+  };
 
   const {width, height, radius, centerX, centerY} = useGameDimensions();
   const { panGesture, rotation, transform } = useWheelGesture(centerX, centerY, gameState);
@@ -75,12 +84,12 @@ function Game() {
     gameStarted.value = withTiming(0, { duration: 500 });
   }, [highScore, storeHighScore, gameStarted])
 
-  const handleSetIsTutorialActive = () => {
+  const handleSetIsTutorialActiveToFalse = () => {
     setIsTutorialActive(false);
     AsyncStorage.setItem('has_played_before', 'true');
   }
 
-  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, score, onGameOver, gameState, isTutorialActive, handleSetIsTutorialActive);
+  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, score, onGameOver, gameState, isTutorialActive, handleSetIsTutorialActiveToFalse, handleTutorialStep, isPaused);
 
   const shakeAnimatedStyle = useShakeEffect(shakeX, shakeY);
   const flickerStyle = useNeonFlicker();
@@ -151,8 +160,8 @@ function Game() {
         <></>
       )}
 
-      {isTutorialActive && gameState === 'PLAYING' && (
-        <TutorialOverlay score={score}/>
+      {isTutorialActive && gameState === 'PLAYING' && isPaused && (
+        <TutorialOverlay onHide={() => setIsPaused(false)} step={tutorialStep}/>
       )}
 
       {gameState === "GAME_OVER" && (
