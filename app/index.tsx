@@ -3,16 +3,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text } from 'react-native';
 import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
 import Animated, { runOnJS, useAnimatedReaction, useSharedValue, withTiming } from "react-native-reanimated";
-
 import Drop from '@/components/Drop';
 import Particle from "@/components/Particle";
 import ScoreCounter from "@/components/ScoreCounter";
 import Wheel from '@/components/Wheel';
-
 import AuroraBackground from "@/components/AuroraBackground";
 import GameOver from "@/components/GameOver";
 import Multiplier from "@/components/Multiplier";
-import StartButton from "@/components/NeonButton";
 import { useGameDimensions } from "@/hooks/useGameDimensions";
 import { useGameLoop } from "@/hooks/useGameLoop";
 import { useMenuTransition } from "@/hooks/useMenuTransition";

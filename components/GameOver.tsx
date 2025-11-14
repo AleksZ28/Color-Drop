@@ -1,8 +1,10 @@
 import NeonButton from '@/components/NeonButton';
-import StartButton from '@/components/NeonButton';
 import { useNeonFlicker } from '@/hooks/useNeonFlicker';
 import { StyleSheet, Text, View } from "react-native";
 import Animated, { FadeIn, FadeOut, SharedValue, SlideInDown, SlideOutDown } from "react-native-reanimated";
+import { LinearGradient } from 'expo-linear-gradient';
+
+const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
 interface GameOverMenuProps {
     score: SharedValue<number>;
@@ -20,11 +22,15 @@ export default function GameOver({ score, highScore, showMenu }: GameOverMenuPro
             entering={FadeIn.duration(500)}
             exiting={FadeOut.duration(500)}
         >
-            <Animated.View
+            <AnimatedLinearGradient
+                colors={['#121212ff', '#1b1b2bff', '#262f3cff', '#20202bff']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
                 style={styles.card}
                 entering={SlideInDown.springify().damping(40)}
                 exiting={SlideOutDown.duration(200)}
             >
+                
                 <Animated.Text style={[styles.title, flickerStyle]}>GAME OVER</Animated.Text>
                 
                 <View style={styles.scoreContainer}>
@@ -38,7 +44,7 @@ export default function GameOver({ score, highScore, showMenu }: GameOverMenuPro
                 </View>
                 
                 <NeonButton onPress={showMenu} text="HOME"/>
-            </Animated.View>
+            </AnimatedLinearGradient>
         </Animated.View>
     )
 }
@@ -49,26 +55,25 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 999,
-        backgroundColor: 'rgba(0,0,0,0.75)'
+        backgroundColor: 'rgba(0,0,0,0.7)'
     },
 
     card: {
-        backgroundColor: 'rgba(10, 10, 10, 1)',
         padding: 30,
         borderRadius: 50,
         alignItems: 'center',
-        borderWidth: 4,
-        borderColor: '#d0f7ff80',
-        boxShadow: '0 0 20px 0 #d0f7ff80',
+        borderWidth: 2,
+        borderColor: '#d0f7ff43',
+        boxShadow: '0 0 25px 0 #d0f7ff80',
         width: '80%',
     },
 
     title: {
         fontSize: 60,
         fontFamily: "TiltNeon",
-        color: "#FF0000",
+        color: "#ff1100ff",
         textAlign: "center",
-        textShadowColor: "#a20000ff",
+        textShadowColor: "#c10101ff",
         textShadowRadius: 15,
         marginBottom: 20,
         letterSpacing: 4,
