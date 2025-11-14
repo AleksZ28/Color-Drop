@@ -2,7 +2,7 @@ import { Gesture } from "react-native-gesture-handler";
 import { useDerivedValue, useFrameCallback, useSharedValue } from "react-native-reanimated";
 import { GameState } from "./useGameLoop";
 
-export function useWheelGesture(centerX: number, centerY: number, gameState: GameState){
+export function useWheelGesture(centerX: number, centerY: number, gameState: GameState, isPaused: boolean){
     const rotation = useSharedValue(0);
     const savedRotation = useSharedValue(0);
     const startAngle = useSharedValue(0);
@@ -20,7 +20,7 @@ export function useWheelGesture(centerX: number, centerY: number, gameState: Gam
     });
 
     const panGesture = Gesture.Pan()
-        .enabled(gameState === "PLAYING")
+        .enabled(gameState === "PLAYING" && !isPaused)
         .onStart((e) => {
             'worklet'
             startAngle.value = Math.atan2(e.y - centerY, e.x - centerX);

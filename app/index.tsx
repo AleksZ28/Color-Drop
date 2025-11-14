@@ -36,7 +36,7 @@ function Game() {
   
 
   useEffect(() => {
-    // AsyncStorage.clear();
+    AsyncStorage.clear();
     const initApp = async () => {
       try {
         const hasPlayed = await AsyncStorage.getItem('has_played_before');
@@ -67,7 +67,7 @@ function Game() {
   };
 
   const {width, height, radius, centerX, centerY} = useGameDimensions();
-  const { panGesture, rotation, transform } = useWheelGesture(centerX, centerY, gameState);
+  const { panGesture, rotation, transform } = useWheelGesture(centerX, centerY, gameState, isPaused);
   const { gameStarted, startGame, wheelPosTransform, titleStyle, startButtonStyle, HUDStyle } = useMenuTransition();
   
   const clock = useSharedValue(0);
