@@ -52,6 +52,7 @@ export function useGameLoop(
     gameState: GameState, isTutorialActive: boolean,
     onTutorialComplete: () => void,
     onTutorialStep: () => void,
+    tutorialStep: number,
     isPaused: boolean,
   ){
 
@@ -154,7 +155,7 @@ export function useGameLoop(
           }
         }
 
-        console.log(speed.value);
+        // console.log(speed.value);
 
         const pxToMove = (speed.value / 1000) * timeSincePrevFrame;
     
@@ -211,14 +212,19 @@ export function useGameLoop(
           })
 
           if(isTutorialActive){
-            const nextDropIndex = score.value;
-            if(nextDropIndex < tutorialSequence.length) {
-              dropColor.value = tutorialSequence[nextDropIndex];
-              runOnJS(onTutorialStep)();
-            } else {
-              dropColor.value = dropColors[Math.floor(Math.random() * 3)];
-              runOnJS(onTutorialComplete)();
+            if(correctHit){
+              if(tutorialStep < tutorialSequence.length - 1) {
+                dropColor.value = tutorialSequence[tutorialStep+1];
+                runOnJS(onTutorialStep)();
+              } else {
+                dropColor.value = dropColors[Math.floor(Math.random() * 3)];
+                runOnJS(onTutorialComplete)();
+              }
+            } else{
+              dropColor.value = tutorialSequence[tutorialStep];
+              lives.value += 1;
             }
+            
           } else{
             if(score.value > 100){
               dropColor.value = dropColors[Math.floor(Math.random() * dropColors.length)];

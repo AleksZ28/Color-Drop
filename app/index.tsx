@@ -87,7 +87,7 @@ function Game() {
     AsyncStorage.setItem('has_played_before', 'true');
   }
 
-  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, score, onGameOver, gameState, isTutorialActive, handleSetIsTutorialActiveToFalse, handleTutorialStep, isPaused);
+  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, score, onGameOver, gameState, isTutorialActive, handleSetIsTutorialActiveToFalse, handleTutorialStep, tutorialStep, isPaused);
 
   const shakeAnimatedStyle = useShakeEffect(shakeX, shakeY);
   const flickerStyle = useNeonFlicker();
