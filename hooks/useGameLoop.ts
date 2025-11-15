@@ -34,7 +34,7 @@ export function useGameLoop(
       failPlayer.play();
     };
 
-    const {centerX, hitZoneY} = useGameDimensions();
+    const {centerX, hitZoneY, height} = useGameDimensions();
 
     const dropY = useSharedValue(-50);
     const dropX = centerX;
@@ -143,7 +143,7 @@ export function useGameLoop(
           }
         }
 
-        const pxToMove = (speed.value / 1000) * timeSincePrevFrame;
+        const pxToMove = ((speed.value / 1000) * timeSincePrevFrame) * (height / 900);
     
         dropY.value += pxToMove;
     
