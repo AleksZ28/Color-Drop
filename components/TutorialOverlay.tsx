@@ -1,8 +1,9 @@
 import { StyleSheet, Text } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
-import Animated, { FadeIn, FadeOut, runOnJS } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import { FontAwesome } from '@expo/vector-icons';
 import { JSX } from "react";
+import { scheduleOnRN } from "react-native-worklets";
 
 interface TutorialOverlayProps {
     onHide: () => void,
@@ -21,7 +22,7 @@ export default function TutorialOverlay({ onHide, step }: TutorialOverlayProps) 
     const tapGesture = Gesture.Tap()
         .onEnd(() => {
             'worklet'
-            runOnJS(onHide)();
+            scheduleOnRN(onHide);
         })
 
     function getHint(step: number){

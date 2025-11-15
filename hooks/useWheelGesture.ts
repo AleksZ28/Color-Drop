@@ -1,6 +1,6 @@
+import { GameState } from "@/types/types";
 import { Gesture } from "react-native-gesture-handler";
 import { useDerivedValue, useFrameCallback, useSharedValue } from "react-native-reanimated";
-import { GameState } from "./useGameLoop";
 
 export function useWheelGesture(centerX: number, centerY: number, gameState: GameState, isPaused: boolean){
     const rotation = useSharedValue(0);

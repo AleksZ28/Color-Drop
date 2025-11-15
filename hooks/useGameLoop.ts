@@ -1,6 +1,6 @@
 import { triggerHapticSuccess, triggerHapticWarning } from "@/utils/haptics";
 import { vec } from "@shopify/react-native-skia";
-import { runOnJS, SharedValue, useFrameCallback, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
+import { SharedValue, useFrameCallback, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { useGameDimensions } from "./useGameDimensions";
 import { useEffect } from "react";
@@ -182,16 +182,16 @@ export function useGameLoop(
                 splashColor.value = dropColor.value
                 splashPosition.value = vec(dropX, hitZoneY);
                 splashTrigger.value = true;
-                runOnJS(playDropSound)();
+                scheduleOnRN(playDropSound);
                 scheduleOnRN(triggerHapticSuccess);
               } else{
                 lives.value -= 1;
 
                 if(lives.value === 0){
-                  runOnJS(onGameOver)(score.value);
+                  scheduleOnRN(onGameOver, score.value);
                 }
                 
-                runOnJS(playFailSound)()
+                scheduleOnRN(playFailSound);
                 triggerBadHitEffect();
                 scheduleOnRN(triggerHapticWarning);
               }
@@ -202,10 +202,10 @@ export function useGameLoop(
             if(correctHit){
               if(tutorialStep < tutorialSequence.length - 1) {
                 dropColor.value = tutorialSequence[tutorialStep+1];
-                runOnJS(onTutorialStep)();
+                scheduleOnRN(onTutorialStep);
               } else {
                 dropColor.value = dropColors[Math.floor(Math.random() * 3)];
-                runOnJS(onTutorialComplete)();
+                scheduleOnRN(onTutorialComplete);
               }
             } else{
               dropColor.value = tutorialSequence[tutorialStep];

@@ -2,7 +2,7 @@ import { Canvas, Group } from "@shopify/react-native-skia";
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text } from 'react-native';
 import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { runOnJS, useAnimatedReaction, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { useAnimatedReaction, useSharedValue, withTiming } from "react-native-reanimated";
 import Drop from '@/components/Drop';
 import Particle from "@/components/Particle";
 import ScoreCounter from "@/components/ScoreCounter";
@@ -24,6 +24,7 @@ import TutorialOverlay from "@/components/TutorialOverlay";
 import NeonButton from "@/components/NeonButton";
 import { createDropPlayer, createFailPlayer } from "@/utils/audio";
 import { GameState } from "@/types/types";
+import { scheduleOnRN } from "react-native-worklets";
 
 function Game() {
   const [fontLoaded] = useFonts(
@@ -109,7 +110,7 @@ function Game() {
     (currValue, prevValue) => {
       if (currValue === 1 && prevValue !== 1) {
         score.value = 0;
-        runOnJS(setGameState)('PLAYING');
+        scheduleOnRN(setGameState, 'PLAYING');
       }
     }
   );
