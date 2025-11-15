@@ -23,6 +23,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import TutorialOverlay from "@/components/TutorialOverlay";
 import NeonButton from "@/components/NeonButton";
 import { createDropPlayer, createFailPlayer } from "@/utils/audio";
+import { GameState } from "@/types/types";
 
 function Game() {
   const [fontLoaded] = useFonts(
@@ -32,11 +33,17 @@ function Game() {
     }
   )
 
+  const [gameState, setGameState] = useState<GameState>('MENU');
+  const [isTutorialActive, setIsTutorialActive] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
+  const [tutorialStep, setTutorialStep] = useState(0);
+  const [highScore, setHighScore] = useState(0);
+
   const dropPlayer = createDropPlayer();
   const failPlayer = createFailPlayer();
 
   useEffect(() => {
-    // AsyncStorage.clear();
+    AsyncStorage.clear()
     const initApp = async () => {
       try {
         const hasPlayed = await AsyncStorage.getItem('has_played_before');
@@ -56,12 +63,6 @@ function Game() {
     initApp();
   }, [])
 
-  type GameState = 'MENU' | 'PLAYING' | 'GAME_OVER';
-  const [gameState, setGameState] = useState<GameState>('MENU');
-  const [isTutorialActive, setIsTutorialActive] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const [tutorialStep, setTutorialStep] = useState(0);
-
   const handleTutorialStep = () => {
     setTutorialStep(prev => prev + 1);
     setIsTutorialActive(true);
@@ -73,9 +74,7 @@ function Game() {
   const { gameStarted, startGame, wheelPosTransform, titleStyle, startButtonStyle, HUDStyle } = useMenuTransition();
   
   const clock = useSharedValue(0);
-
   const score = useSharedValue(0);
-  const [highScore, setHighScore] = useState(0);
 
   const onGameOver = useCallback((newScore: number) => {
     if(newScore > highScore){

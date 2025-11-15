@@ -5,45 +5,8 @@ import { scheduleOnRN } from "react-native-worklets";
 import { useGameDimensions } from "./useGameDimensions";
 import { useEffect } from "react";
 import { AudioPlayer } from "expo-audio";
-
-export type GameState = 'MENU' | 'PLAYING' | 'GAME_OVER';
-
-const dropColors = ["#FF0000", "#FFFF00", "#0000FF", "#FF8000", "#00FF00", "#FF00FF"];
-
-const tutorialSequence = ["#FF0000", "#FFFF00", "#FF8000", "#0000FF"];
-
-const buffers = [
-  {
-    color: "#FF0000",
-    fromAngleDeg: 0,
-    toAngleDeg: 120
-  },
-  {
-    color: "#FFFF00",
-    fromAngleDeg: 120,
-    toAngleDeg: 240
-  },
-  {
-    color: "#0000FF",
-    fromAngleDeg: 240,
-    toAngleDeg: 360
-  },
-  {
-    color: "#FF8000",
-    fromAngleDeg: 100,
-    toAngleDeg: 140
-  },
-  {
-    color: "#00FF00",
-    fromAngleDeg: 220,
-    toAngleDeg: 260
-  },
-  {
-    color: "#FF00FF",
-    fromAngleDeg: 340,
-    toAngleDeg: 20
-  }
-  ]
+import { baseSpeedValue, buffers, dropColors, dropRadiusValue, livesCount, multiplierThreshold, speedMultiplier, tutorialSequence, tutorialSpeedValue } from "@/constants/gameConfig";
+import { GameState } from "@/types/types";
 
 export function useGameLoop(
     rotation: SharedValue<number>,
@@ -75,9 +38,26 @@ export function useGameLoop(
 
     const dropY = useSharedValue(-50);
     const dropX = centerX;
-    const dropRadius = 20;
-
+    const dropRadius = dropRadiusValue;
     const dropColor = useSharedValue(isTutorialActive ? tutorialSequence[0] : dropColors[Math.floor(Math.random() * 3)]);
+
+    const shakeX = useSharedValue(0);
+    const shakeY = useSharedValue(0);
+
+    const splashTrigger = useSharedValue(false);
+    const splashPosition = useSharedValue(vec(0, 0));
+    const splashColor = useSharedValue("#FF0000")
+
+    const particles = [...Array(15).keys()];
+
+    const multiplier = useSharedValue(1);
+    const multiplierGapClock = useSharedValue(0);
+
+    const baseSpeed = useSharedValue(baseSpeedValue)
+    const speed = useSharedValue(baseSpeedValue);
+    const speedResetDone = useSharedValue(false);
+
+    const lives = useSharedValue(livesCount);
 
     const hasGameStarted = useSharedValue(false);
 
@@ -100,7 +80,7 @@ export function useGameLoop(
         }
         
         score.value = 0;
-        lives.value = 2;
+        lives.value = livesCount;
         speedResetDone.value = false;
         multiplier.value = 1;
         multiplierGapClock.value = 0;
@@ -111,19 +91,6 @@ export function useGameLoop(
       }
 
     }, [gameState]);
-
-    const shakeX = useSharedValue(0);
-    const shakeY = useSharedValue(0);
-
-    const splashTrigger = useSharedValue(false);
-    const splashPosition = useSharedValue(vec(0, 0));
-    const splashColor = useSharedValue("#FF0000")
-
-    const particles = [...Array(15).keys()];
-
-    const multiplier = useSharedValue(1);
-    const multiplierGapClock = useSharedValue(0);
-    
 
     const triggerBadHitEffect = () => {
       'worklet';
@@ -143,12 +110,6 @@ export function useGameLoop(
       );
     };
 
-    const baseSpeed = useSharedValue(300)
-    const speed = useSharedValue(300);
-    const speedResetDone = useSharedValue(false);
-
-    const lives = useSharedValue(2);
-
     const frameCallback = useFrameCallback((frameInfo) => {
 
         'worklet'
@@ -158,9 +119,9 @@ export function useGameLoop(
         }
 
         if (isTutorialActive){
-          baseSpeed.value = 150;
+          baseSpeed.value = tutorialSpeedValue;
         } else{
-          baseSpeed.value = 300;
+          baseSpeed.value = baseSpeedValue;
         }
 
         const timeSincePrevFrame = frameInfo.timeSincePreviousFrame;
@@ -178,11 +139,9 @@ export function useGameLoop(
           if(speedResetDone.value){
             speed.value = baseSpeed.value - 25 + (score.value) / 4;
           } else{
-            speed.value = baseSpeed.value + score.value * 2;
+            speed.value = baseSpeed.value + score.value * speedMultiplier;
           }
         }
-
-        // console.log(speed.value);
 
         const pxToMove = (speed.value / 1000) * timeSincePrevFrame;
     
@@ -200,7 +159,6 @@ export function useGameLoop(
             if(buffer.color == dropColor.value){
               const currentRotationDeg = (rotation.value % (2*Math.PI)) * (180/Math.PI);
               const hitAngleDeg = ((270 - currentRotationDeg) % 360 + 360) % 360
-              // console.log(hitAngleDeg);
 
               const isWrapping = buffer.fromAngleDeg > buffer.toAngleDeg;
 
@@ -217,7 +175,7 @@ export function useGameLoop(
               if(correctHit) {
                 score.value += 1 * multiplier.value;
                 multiplierGapClock.value += 1;
-                if(multiplierGapClock.value === 3){
+                if(multiplierGapClock.value === multiplierThreshold){
                   multiplier.value += 1;
                   multiplierGapClock.value = 0;
                 }

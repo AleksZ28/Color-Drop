@@ -13,7 +13,7 @@ const steps: { [key: number]: JSX.Element } = {
     0: (<>Obracaj koło, wykonując na nim okrężny ruch palcem, aby dopasować <Text style={{color:"red"}}>kolor</Text> na kole do <Text style={{color:"red"}}>koloru</Text> kropli.</>),
     1: (<>Teraz złap <Text style={{color:"yellow"}}>żółty</Text>!</>),
     2: (<>Świetnie! A teraz ZMIESZAJ KOLORY! Traf między <Text style={{color:"red"}}>czerwony</Text> i <Text style={{color:"yellow"}}>żółty</Text>, aby złapać <Text style={{color:"orange"}}>pomarańczowy</Text>.</>),
-    3: (<>Dobra robota! Gra z czasem będzie przyspieszać, a mieszanie kolorów rozpocznie się po przekroczeniu 100 pkt.</>)
+    3: (<>Dobra robota! Gra z czasem będzie przyspieszać, a mieszanie kolorów rozpocznie się po przekroczeniu 100 pkt.<Text>{"\n"}</Text>Masz tylko <Text style={{color:"red"}}>2 życia</Text>, więc uważaj – możesz się pomylić <Text style={{color:"red"}}>tylko raz</Text>!</>)
 }
 
 export default function TutorialOverlay({ onHide, step }: TutorialOverlayProps) {
