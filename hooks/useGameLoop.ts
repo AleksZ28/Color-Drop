@@ -4,6 +4,7 @@ import { runOnJS, SharedValue, useFrameCallback, useSharedValue, withSequence, w
 import { scheduleOnRN } from "react-native-worklets";
 import { useGameDimensions } from "./useGameDimensions";
 import { useEffect } from "react";
+import { AudioPlayer } from "expo-audio";
 
 export type GameState = 'MENU' | 'PLAYING' | 'GAME_OVER';
 
@@ -54,7 +55,21 @@ export function useGameLoop(
     onTutorialStep: () => void,
     tutorialStep: number,
     isPaused: boolean,
+    dropPlayer: AudioPlayer,
+    failPlayer: AudioPlayer
   ){
+
+    const playDropSound = () => {
+      if (!dropPlayer) return;
+      dropPlayer.seekTo(0);
+      dropPlayer.play();
+    };
+
+    const playFailSound = () => {
+      if (!failPlayer) return;
+      failPlayer.seekTo(0);
+      failPlayer.play();
+    };
 
     const {centerX, hitZoneY} = useGameDimensions();
 
@@ -64,6 +79,8 @@ export function useGameLoop(
 
     const dropColor = useSharedValue(isTutorialActive ? tutorialSequence[0] : dropColors[Math.floor(Math.random() * 3)]);
 
+    const hasGameStarted = useSharedValue(false);
+
     useEffect(() => {
       if (gameState === 'PLAYING') {
         if (isTutorialActive){
@@ -72,6 +89,16 @@ export function useGameLoop(
           dropColor.value = dropColors[Math.floor(Math.random() * 3)];
         }
 
+        if(!hasGameStarted.value){
+          playDropSound();
+          playFailSound();
+          
+          hasGameStarted.value = true;
+
+          dropPlayer.volume = 1;
+          failPlayer.volume = 1;
+        }
+        
         score.value = 0;
         lives.value = 2;
         speedResetDone.value = false;
@@ -197,6 +224,7 @@ export function useGameLoop(
                 splashColor.value = dropColor.value
                 splashPosition.value = vec(dropX, hitZoneY);
                 splashTrigger.value = true;
+                runOnJS(playDropSound)();
                 scheduleOnRN(triggerHapticSuccess);
               } else{
                 lives.value -= 1;
@@ -205,6 +233,7 @@ export function useGameLoop(
                   runOnJS(onGameOver)(score.value);
                 }
                 
+                runOnJS(playFailSound)()
                 triggerBadHitEffect();
                 scheduleOnRN(triggerHapticWarning);
               }

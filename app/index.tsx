@@ -22,7 +22,7 @@ import { TiltNeon_400Regular } from "@expo-google-fonts/tilt-neon";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import TutorialOverlay from "@/components/TutorialOverlay";
 import NeonButton from "@/components/NeonButton";
-
+import { createDropPlayer, createFailPlayer } from "@/utils/audio";
 
 function Game() {
   const [fontLoaded] = useFonts(
@@ -31,7 +31,9 @@ function Game() {
       TiltNeon: TiltNeon_400Regular
     }
   )
-  
+
+  const dropPlayer = createDropPlayer();
+  const failPlayer = createFailPlayer();
 
   useEffect(() => {
     // AsyncStorage.clear();
@@ -44,6 +46,8 @@ function Game() {
         }
         const highScoreFromStorage = await getHighScore();
         setHighScore(highScoreFromStorage);
+        dropPlayer.volume = 0;
+        failPlayer.volume = 0;
       } catch (e) {
         console.error(e)
       }
@@ -87,7 +91,7 @@ function Game() {
     AsyncStorage.setItem('has_played_before', 'true');
   }
 
-  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, score, onGameOver, gameState, isTutorialActive, handleSetIsTutorialActiveToFalse, handleTutorialStep, tutorialStep, isPaused);
+  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, score, onGameOver, gameState, isTutorialActive, handleSetIsTutorialActiveToFalse, handleTutorialStep, tutorialStep, isPaused, dropPlayer, failPlayer);
 
   const shakeAnimatedStyle = useShakeEffect(shakeX, shakeY);
   const flickerStyle = useNeonFlicker();
