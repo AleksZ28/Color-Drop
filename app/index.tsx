@@ -43,7 +43,6 @@ function Game() {
   const failPlayer = createFailPlayer();
 
   useEffect(() => {
-    AsyncStorage.clear()
     const initApp = async () => {
       try {
         const hasPlayed = await AsyncStorage.getItem('has_played_before');
