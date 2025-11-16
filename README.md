@@ -33,11 +33,11 @@ npm install
 
 Aplikacja intensywnie korzysta z animacji (Reanimated + Skia), przez co środowisko deweloperskie może obniżać płynność.
 
-__Niezalecane jest również uruchamianie gry na emulatorze z powodu niskiej wydajności i dużego opóźnienia emulatora. Gra jest dynamiczna, więc uruchomienie jej na emulatorze znacząco obniża feeling.__
+__Bardziej zalecane jest uruchamianie gry na fizycznym urządzeniu niż na emulatorze z powodu niskiej wydajności i opóźnienia emulatora. Gra jest dynamiczna, więc uruchomienie jej na emulatorze może obniżyć feeling. Ponadto gra zawiera haptyczne wibracje, które siłą rzeczy nie istnieją na emulatorze.__
 
-Aby zobaczyć rzeczywistą wydajność gry, najlepiej uruchamiać projekt na jeden z dwóch sposobów:
+Aby zobaczyć rzeczywistą wydajność gry, najlepiej uruchamiać projekt na jeden z trzech sposobów:
 
-1. Zbuildowane apk
+1. Zbuildowane apk (najlepszy rezultat)
 ```
 eas build -p android --profile preview
 ```
@@ -49,7 +49,12 @@ Zbuildowane przeze mnie apk dostępne jest pod linkiem:
 npx expo start
 ```
 
-Jeśli użycie ```npx expo run:android``` jest konieczne, zalecane jest wyłączenie JS Dev Mode oraz Fast Refresh w celu zwiększenia performance'u. Nie gwarantuje to jednak wysokiej liczby FPS.
+3. Natywne uruchomienie 
+```
+npx expo run:android
+```
+
+Obowiązkowe jest wyłączenie JS Dev Mode oraz Fast Refresh w celu zwiększenia performance'u. Mimo wszystko ten sposób nie daje najlepszych rezultatów.
 
 ---
 
