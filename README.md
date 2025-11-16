@@ -1,50 +1,136 @@
-# Welcome to your Expo app 👋
+# 🔴 🟡 🔵 Color Drop 🔵 🟡 🔴
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Minimalistyczna gra zręcznościowa stworzona w React Native z użyciem m.in. Reanimated i Skia, działająca w środowisku Expo.
 
-## Get started
+## O grze
 
-1. Install dependencies
+Color Drop to gra sprawdzająca twój refleks. Celem jest obracanie 3-kolorowego koła, aby dopasować jego segment do koloru spadającej kropli. Gra z czasem przyspiesza i wprowadza mechanikę "mieszania kolorów". Całość doprawiona jest dopracowanymi, płynnymi animacjami.
 
-   ```bash
-   npm install
-   ```
+<img src="./assets/readme/demo.gif" width="300"/>
 
-2. Start the app
+**Pełny gameplay:** [https://youtube.com/shorts/COmROuSNkOs](https://youtube.com/shorts/COmROuSNkOs)
 
-   ```bash
-   npx expo start
-   ```
 
-In the output, you'll find options to open the app in a
+## Uruchomienie
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+#### Instalacja
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+git clone https://github.com/AleksZ28/Color-Drop
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+```
+cd Color-Drop
+```
 
-## Learn more
+```
+npm install
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+##### Aplikacja testowana była na urządzeniu fizycznym z systemem Android.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+#### ⚠️ Uwagi dot. wydajności
 
-## Join the community
+Aplikacja intensywnie korzysta z animacji (Reanimated + Skia), przez co środowisko deweloperskie może obniżać płynność.
 
-Join our community of developers creating universal apps.
+__Niezalecane jest również uruchamianie gry na emulatorze z powodu niskiej wydajności i dużego opóźnienia emulatora. Gra jest dynamiczna, więc uruchomienie jej na emulatorze znacząco obniża feeling.__
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+Aby zobaczyć rzeczywistą wydajność gry, najlepiej uruchamiać projekt na jeden z dwóch sposobów:
+
+1. Zbuildowane apk
+```
+eas build -p android --profile preview
+```
+Zbuildowane przeze mnie apk dostępne jest pod linkiem:
+[https://expo.dev/accounts/aleksz/projects/color-drop/builds/4ff31114-e043-4bc1-9616-240f511cd8cb](https://expo.dev/accounts/aleksz/projects/color-drop/builds/4ff31114-e043-4bc1-9616-240f511cd8cb)
+
+2. Expo Go (płynność zbliżona do natywnej)
+```
+npx expo start
+```
+
+Jeśli użycie ```npx expo run:android``` jest konieczne, zalecane jest wyłączenie JS Dev Mode oraz Fast Refresh w celu zwiększenia performance'u. Nie gwarantuje to jednak wysokiej liczby FPS.
+
+---
+
+### Kluczowe mechaniki
+
+- Dynamiczny poziom trudności: Gra automatycznie przyspiesza i zwiększa złożoność w miarę postępów gracza.
+
+- Mieszanie kolorów: Po osiągnięciu progu punktowego 100pkt, gra zaczyna zrzucać kolory wtórne (Pomarańczowy, Zielony, Różówy). Gracz musi trafić między dwoma kolorami koła, aby je "stworzyć".
+
+- Mnożnik: Trzy udane trafienia zwiększają mnożnik punktów.
+
+- Interaktywny tutorial: Aplikacja wykrywa pierwsze uruchomienie i za pomocą pauzujących grę nakładek uczy gracza zasad gry.
+
+- Wibracje przy trafieniu lub błędzie.
+
+- Dźwięki zsynchronizowane z akcjami w grze.
+
+- Najlepszy wynik: Najwyższy wynik zapisywany jest lokalnie na urządzeniu, dzięki czemu pozostaje nawet po zamknięciu aplikacji.
+
+
+### Efekty wizualne:
+
+- Płynne animacje przejścia pomiędzy menu a grą
+
+- Animujące się napisy z neonowym efektem
+
+- Efekt rozprysku kropli na cząsteczki
+
+- Animacja kropli w trakcie spadania
+
+- Efekt shake ekranu przy błędzie
+
+- Generowane kolorowe tło z dynamicznymi rozmytymi kółkami unoszącymi się losowo
+
+- Animacje zmiany puntkacji oraz mnożnika
+
+### Zastosowane technologie to m.in.:
+
+- React Native z Expo
+- react-native-reanimated
+- @shopify/react-native-skia
+- react-native-gesture-handler
+- react-native-async-storage
+- expo-audio
+- expo-haptics
+- expo-linear-gradient
+
+### Architektura:
+
+1. `app/index.tsx`
+
+   - Główny plik gry, który inicjalizuje wszystkie hooki i komponenty, łączy logikę gry, animacje, sterowanie oraz menu w jedną spójną całość.
+
+   - Zawiera bazowy layout aplikacji.
+
+   - Warunkowo renderuje elementy.
+
+2. `hooks/`
+
+   - `useGameLoop.ts`: główny silnik gry działający na wątku UI
+
+   - `useWheelGesture.ts`: zarządza gestem obracania koła
+   
+   - `useMenuTransition.ts`: zarządza płynnym przejściem między menu a grą
+
+   - `useShakeEffect.ts`, `useNeonFlicker.ts`, `useGameDimensions.ts`: hooki pomocnicze dla efektów i wymiarów
+
+3. `components`
+
+   - Komponenty Skia: `Wheel.tsx`, `Drop.tsx`, `Particle.tsx`, `AuroraBackground.tsx`, `Blob.tsx`
+
+   - Komponenty UI: `ScoreCounter.tsx`, `Multiplier.tsx`, `NeonButton.tsx`, `TutorialOverlay.tsx`, `GameOver.tsx`
+
+4. `assets/`
+   - Zawiera zasoby gry takie jak ikona oraz dźwięki.
+
+5. `utils/`
+   - Funkcje pomocnicze: zapis i odczyt najlepszego wyniku z AsyncStorage (`highScore.ts`), odtwarzanie dźwięków (`audio.ts`), obsługa wibracji (`haptics.ts`)
+
+6. `constants/gameConfig.ts`
+   - Stałe używane w grze.
+
+7. `types/`
+   - Definicja globalnego typu GameState.
