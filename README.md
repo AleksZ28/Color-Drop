@@ -27,7 +27,8 @@ cd Color-Drop
 npm install
 ```
 
-##### Aplikacja testowana była na urządzeniu fizycznym z systemem Android.
+__Aplikacja testowana była na urządzeniu fizycznym z systemem Android.__
+Nie była testowana na systemie iOS, więc nie mogę zagwarantować bezbłędnego działania na nim.
 
 #### ⚠️ Uwagi dot. wydajności
 
