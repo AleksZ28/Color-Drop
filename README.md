@@ -1,5 +1,139 @@
 # 🔴 🟡 🔵 Color Drop 🔵 🟡 🔴
 
+Minimalist reflex game built with React Native, using Reanimated and Skia, running in the Expo environment.
+
+## Game description
+Color Drop is a reflex-testing game. The goal is to rotate a 3-color wheel to match its segment with the falling droplet's color. The game speeds up over time and introduces a "color mixing" mechanic. The experience is enhanced with smooth, polished animations.
+
+<img src="./assets/readme/demo.gif" width="300"/>
+
+**Full gameplay:** [https://youtube.com/shorts/COmROuSNkOs](https://youtube.com/shorts/COmROuSNkOs)
+
+
+## Running the App
+
+### Installation
+
+```
+git clone https://github.com/AleksZ28/Color-Drop
+```
+
+```
+cd Color-Drop
+```
+
+```
+npm install
+```
+
+1. Build APK (best performance)
+```
+eas build -p android --profile preview
+```
+
+2. Expo Go (near-native performance)
+```
+npx expo start
+```
+
+3. Native run
+```
+npx expo run:android
+```
+
+Make sure to disable JS Dev Mode and Fast Refresh to improve performance.
+
+---
+
+## Key mechanics
+
+- **Dynamic difficulty:** The game speeds up and increases complexity as the player progresses.
+
+- **Color mixing:** After reaching 100 points, secondary colors (Orange, Green, Pink) start dropping. The player must match between two wheel colors to "create" them.
+  
+- **Multiplier:** Three successful hits increase the score multiplier.
+  
+- **Interactive tutorial:** First launch triggers overlays that pause the game and teach the player the rules.
+  
+- **Vibration:** Feedback on hit or miss.
+  
+- **Sound effects:** Actions in the game are synced with audio.
+  
+- **High score:** Stored locally on the device and persists after closing the app.
+
+
+## Visual effects
+
+- Smooth transitions between menu and gameplay.
+  
+- Animated neon-style texts.
+  
+- Droplet particle splash effect.
+  
+- Droplet falling animation.
+  
+- Screen shake effect on error.
+  
+- Dynamic background with colored blurred circles.
+   
+- Animated score and multiplier updates.
+
+
+
+## Technologies used
+- React Native with Expo  
+- react-native-reanimated  
+- @shopify/react-native-skia  
+- react-native-gesture-handler  
+- react-native-async-storage  
+- expo-av (audio)  
+- expo-haptics  
+- expo-linear-gradient
+
+
+
+## Architecture
+
+1. `app/index.tsx`
+
+   - Main game file that initializes all hooks and components, integrates game logic, animations, controls, and menu into a cohesive whole.
+
+   - Contains the base layout of the application.
+
+   - Conditionally renders elements.
+
+2. `hooks/`
+
+   - `useGameLoop.ts`: main game engine running on the UI thread.
+
+   - `useWheelGesture.ts`: manages the wheel rotation gesture.
+   
+   - `useMenuTransition.ts`: manages smooth transitions between the menu and the game.
+
+   - `useShakeEffect.ts`, `useNeonFlicker.ts`, `useGameDimensions.ts`: helper hooks for effects and layout dimensions.
+
+3. `components/`
+
+   - **Skia components:** `Wheel.tsx`, `Drop.tsx`, `Particle.tsx`, `AuroraBackground.tsx`, `Blob.tsx`.
+
+   - **UI components:** `ScoreCounter.tsx`, `Multiplier.tsx`, `NeonButton.tsx`, `TutorialOverlay.tsx`, `GameOver.tsx`.
+
+4. `assets/`
+   - Contains game assets such as icons and sounds.
+
+5. `utils/`
+   - Helper functions: saving and loading the high score with AsyncStorage (`highScore.ts`), playing sounds (`audio.ts`), handling vibrations (`haptics.ts`).
+
+6. `constants/gameConfig.ts`
+   - Constants used throughout the game.
+
+7. `types/`
+   - Global type definition for `GameState`.
+
+---
+# 🇵🇱🇵🇱🇵🇱
+# 🔴 🟡 🔵 Color Drop 🔵 🟡 🔴
+
 Minimalistyczna gra zręcznościowa stworzona w React Native z użyciem m.in. Reanimated i Skia, działająca w środowisku Expo.
 
 ## O grze
@@ -27,23 +161,10 @@ cd Color-Drop
 npm install
 ```
 
-__Aplikacja testowana była na urządzeniu fizycznym z systemem Android.__
-Nie była testowana na systemie iOS, więc nie mogę zagwarantować bezbłędnego działania na nim.
-
-#### ⚠️ Uwagi dot. wydajności
-
-Aplikacja intensywnie korzysta z animacji (Reanimated + Skia), przez co środowisko deweloperskie może obniżać płynność.
-
-__Bardziej zalecane jest uruchamianie gry na fizycznym urządzeniu niż na emulatorze z powodu niskiej wydajności i opóźnienia emulatora. Gra jest dynamiczna, więc uruchomienie jej na emulatorze może obniżyć feeling. Ponadto gra zawiera haptyczne wibracje, które siłą rzeczy nie istnieją na emulatorze.__
-
-Aby zobaczyć rzeczywistą wydajność gry, najlepiej uruchamiać projekt na jeden z trzech sposobów:
-
 1. Zbuildowane apk (najlepszy rezultat)
 ```
 eas build -p android --profile preview
 ```
-Zbuildowane przeze mnie apk dostępne jest pod linkiem:
-[https://expo.dev/accounts/aleksz/projects/color-drop/builds/4ff31114-e043-4bc1-9616-240f511cd8cb](https://expo.dev/accounts/aleksz/projects/color-drop/builds/4ff31114-e043-4bc1-9616-240f511cd8cb)
 
 2. Expo Go (płynność zbliżona do natywnej)
 ```
@@ -55,7 +176,7 @@ npx expo start
 npx expo run:android
 ```
 
-Obowiązkowe jest wyłączenie JS Dev Mode oraz Fast Refresh w celu zwiększenia performance'u. Mimo wszystko ten sposób nie daje najlepszych rezultatów.
+Obowiązkowe jest wyłączenie JS Dev Mode oraz Fast Refresh w celu zwiększenia performance'u.
 
 ---
 
