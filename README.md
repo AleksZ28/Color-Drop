@@ -12,7 +12,7 @@ Color Drop is a reflex-testing game. The goal is to rotate a 3-color wheel to ma
 
 ## Running the App
 
-### Installation
+#### Installation
 
 ```
 git clone https://github.com/AleksZ28/Color-Drop
@@ -45,7 +45,7 @@ Make sure to disable JS Dev Mode and Fast Refresh to improve performance.
 
 ---
 
-## Key mechanics
+### Key mechanics
 
 - **Dynamic difficulty:** The game speeds up and increases complexity as the player progresses.
 
@@ -62,7 +62,7 @@ Make sure to disable JS Dev Mode and Fast Refresh to improve performance.
 - **High score:** Stored locally on the device and persists after closing the app.
 
 
-## Visual effects
+### Visual effects
 
 - Smooth transitions between menu and gameplay.
   
@@ -80,7 +80,7 @@ Make sure to disable JS Dev Mode and Fast Refresh to improve performance.
 
 
 
-## Technologies used
+### Technologies used
 - React Native with Expo  
 - react-native-reanimated  
 - @shopify/react-native-skia  
@@ -92,7 +92,7 @@ Make sure to disable JS Dev Mode and Fast Refresh to improve performance.
 
 
 
-## Architecture
+### Architecture
 
 1. `app/index.tsx`
 
