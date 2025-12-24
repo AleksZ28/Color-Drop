@@ -40,7 +40,6 @@
       ],
       "expo-font",
       "expo-web-browser",
-      "expo-audio",
       "expo-asset"
     ],
     "experiments": {

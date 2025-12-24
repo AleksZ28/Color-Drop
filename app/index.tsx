@@ -1,29 +1,28 @@
-import { Canvas, Group } from "@shopify/react-native-skia";
-import React, { useCallback, useEffect, useState } from "react";
-import { StyleSheet, Text } from 'react-native';
-import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { useAnimatedReaction, useSharedValue, withTiming } from "react-native-reanimated";
-import Drop from '@/components/Drop';
-import Particle from "@/components/Particle";
-import ScoreCounter from "@/components/ScoreCounter";
-import Wheel from '@/components/Wheel';
 import AuroraBackground from "@/components/AuroraBackground";
+import Drop from '@/components/Drop';
 import GameOver from "@/components/GameOver";
 import Multiplier from "@/components/Multiplier";
+import NeonButton from "@/components/NeonButton";
+import Particle from "@/components/Particle";
+import ScoreCounter from "@/components/ScoreCounter";
+import TutorialOverlay from "@/components/TutorialOverlay";
+import Wheel from '@/components/Wheel';
 import { useGameDimensions } from "@/hooks/useGameDimensions";
 import { useGameLoop } from "@/hooks/useGameLoop";
 import { useMenuTransition } from "@/hooks/useMenuTransition";
 import { useNeonFlicker } from "@/hooks/useNeonFlicker";
 import { useShakeEffect } from "@/hooks/useShakeEffect";
 import { useWheelGesture } from "@/hooks/useWheelGesture";
+import { GameState } from "@/types/types";
 import { getHighScore, storeHighScore } from '@/utils/highScore';
 import { Neonderthaw_400Regular, useFonts } from "@expo-google-fonts/neonderthaw";
 import { TiltNeon_400Regular } from "@expo-google-fonts/tilt-neon";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import TutorialOverlay from "@/components/TutorialOverlay";
-import NeonButton from "@/components/NeonButton";
-import { createDropPlayer, createFailPlayer } from "@/utils/audio";
-import { GameState } from "@/types/types";
+import { Canvas, Group } from "@shopify/react-native-skia";
+import React, { useCallback, useEffect, useState } from "react";
+import { StyleSheet, Text } from 'react-native';
+import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
+import Animated, { useAnimatedReaction, useSharedValue, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 
 function Game() {
@@ -40,9 +39,6 @@ function Game() {
   const [tutorialStep, setTutorialStep] = useState(0);
   const [highScore, setHighScore] = useState(0);
 
-  const dropPlayer = createDropPlayer();
-  const failPlayer = createFailPlayer();
-
   useEffect(() => {
     const initApp = async () => {
       try {
@@ -53,8 +49,6 @@ function Game() {
         }
         const highScoreFromStorage = await getHighScore();
         setHighScore(highScoreFromStorage);
-        dropPlayer.volume = 0;
-        failPlayer.volume = 0;
       } catch (e) {
         console.error(e)
       }
@@ -90,7 +84,7 @@ function Game() {
     AsyncStorage.setItem('has_played_before', 'true');
   }
 
-  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, score, onGameOver, gameState, isTutorialActive, handleSetIsTutorialActiveToFalse, handleTutorialStep, tutorialStep, isPaused, dropPlayer, failPlayer);
+  const {dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier} = useGameLoop(rotation, clock, score, onGameOver, gameState, isTutorialActive, handleSetIsTutorialActiveToFalse, handleTutorialStep, tutorialStep, isPaused);
 
   const shakeAnimatedStyle = useShakeEffect(shakeX, shakeY);
   const flickerStyle = useNeonFlicker();

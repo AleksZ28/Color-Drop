@@ -1,12 +1,11 @@
+import { baseSpeedValue, buffers, dropColors, dropRadiusValue, livesCount, multiplierThreshold, speedMultiplier, tutorialSequence, tutorialSpeedValue } from "@/constants/gameConfig";
+import { GameState } from "@/types/types";
 import { triggerHapticSuccess, triggerHapticWarning } from "@/utils/haptics";
 import { vec } from "@shopify/react-native-skia";
+import { useEffect } from "react";
 import { SharedValue, useFrameCallback, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 import { useGameDimensions } from "./useGameDimensions";
-import { useEffect } from "react";
-import { AudioPlayer } from "expo-audio";
-import { baseSpeedValue, buffers, dropColors, dropRadiusValue, livesCount, multiplierThreshold, speedMultiplier, tutorialSequence, tutorialSpeedValue } from "@/constants/gameConfig";
-import { GameState } from "@/types/types";
 
 export function useGameLoop(
     rotation: SharedValue<number>,
@@ -17,22 +16,8 @@ export function useGameLoop(
     onTutorialComplete: () => void,
     onTutorialStep: () => void,
     tutorialStep: number,
-    isPaused: boolean,
-    dropPlayer: AudioPlayer,
-    failPlayer: AudioPlayer
+    isPaused: boolean
   ){
-
-    const playDropSound = () => {
-      if (!dropPlayer) return;
-      dropPlayer.seekTo(0);
-      dropPlayer.play();
-    };
-
-    const playFailSound = () => {
-      if (!failPlayer) return;
-      failPlayer.seekTo(0);
-      failPlayer.play();
-    };
 
     const {centerX, hitZoneY, height} = useGameDimensions();
 
@@ -59,24 +44,12 @@ export function useGameLoop(
 
     const lives = useSharedValue(livesCount);
 
-    const hasGameStarted = useSharedValue(false);
-
     useEffect(() => {
       if (gameState === 'PLAYING') {
         if (isTutorialActive){
           dropColor.value = tutorialSequence[0];
         } else {
           dropColor.value = dropColors[Math.floor(Math.random() * 3)];
-        }
-
-        if(!hasGameStarted.value){
-          playDropSound();
-          playFailSound();
-          
-          hasGameStarted.value = true;
-
-          dropPlayer.volume = 1;
-          failPlayer.volume = 1;
         }
         
         score.value = 0;
@@ -182,7 +155,6 @@ export function useGameLoop(
                 splashColor.value = dropColor.value
                 splashPosition.value = vec(dropX, hitZoneY);
                 splashTrigger.value = true;
-                scheduleOnRN(playDropSound);
                 scheduleOnRN(triggerHapticSuccess);
               } else{
                 lives.value -= 1;
@@ -191,7 +163,6 @@ export function useGameLoop(
                   scheduleOnRN(onGameOver, score.value);
                 }
                 
-                scheduleOnRN(playFailSound);
                 triggerBadHitEffect();
                 scheduleOnRN(triggerHapticWarning);
               }
