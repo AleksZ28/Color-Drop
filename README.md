@@ -78,19 +78,14 @@ Make sure to disable JS Dev Mode and Fast Refresh to improve performance.
    
 - Animated score and multiplier updates.
 
-
-
 ### Technologies used
 - React Native with Expo  
 - react-native-reanimated  
 - @shopify/react-native-skia  
 - react-native-gesture-handler  
 - react-native-async-storage  
-- expo-av (audio)  
 - expo-haptics  
 - expo-linear-gradient
-
-
 
 ### Architecture
 
@@ -122,7 +117,7 @@ Make sure to disable JS Dev Mode and Fast Refresh to improve performance.
    - Contains game assets such as icons and sounds.
 
 5. `utils/`
-   - Helper functions: saving and loading the high score with AsyncStorage (`highScore.ts`), playing sounds (`audio.ts`), handling vibrations (`haptics.ts`).
+   - Helper functions: saving and loading the high score with AsyncStorage (`highScore.ts`), handling vibrations (`haptics.ts`).
 
 6. `constants/gameConfig.ts`
    - Constants used throughout the game.
@@ -192,8 +187,6 @@ Obowiązkowe jest wyłączenie JS Dev Mode oraz Fast Refresh w celu zwiększenia
 
 - Wibracje przy trafieniu lub błędzie.
 
-- Dźwięki zsynchronizowane z akcjami w grze.
-
 - Najlepszy wynik: Najwyższy wynik zapisywany jest lokalnie na urządzeniu, dzięki czemu pozostaje nawet po zamknięciu aplikacji.
 
 
@@ -220,7 +213,6 @@ Obowiązkowe jest wyłączenie JS Dev Mode oraz Fast Refresh w celu zwiększenia
 - @shopify/react-native-skia
 - react-native-gesture-handler
 - react-native-async-storage
-- expo-audio
 - expo-haptics
 - expo-linear-gradient
 
@@ -254,7 +246,7 @@ Obowiązkowe jest wyłączenie JS Dev Mode oraz Fast Refresh w celu zwiększenia
    - Zawiera zasoby gry takie jak ikona oraz dźwięki.
 
 5. `utils/`
-   - Funkcje pomocnicze: zapis i odczyt najlepszego wyniku z AsyncStorage (`highScore.ts`), odtwarzanie dźwięków (`audio.ts`), obsługa wibracji (`haptics.ts`)
+   - Funkcje pomocnicze: zapis i odczyt najlepszego wyniku z AsyncStorage (`highScore.ts`), obsługa wibracji (`haptics.ts`)
 
 6. `constants/gameConfig.ts`
    - Stałe używane w grze.
