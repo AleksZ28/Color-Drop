@@ -42,3 +42,5 @@ export const speedMultiplier = 2;
 export const multiplierThreshold = 3;
 export const livesCount = 2;
 export const dropRadiusValue = 20;
+
+export const UPDATE_API_URL = "https://aleksz.dev/api/colordrop/version";
