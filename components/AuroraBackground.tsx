@@ -15,10 +15,10 @@ const blue = "#0000FFC0";
 export default function AuroraBackground({ clock }: AuroraBackgroundProps) {
   return (
     <Group>
-      <Blur blur={100}/> 
-      <Blob clock={clock} shift={1} color={red} baseRadius={50}/>
-      <Blob clock={clock} shift={1.3} color={yellow} baseRadius={100}/>
-      <Blob clock={clock} shift={0.8} color={blue} baseRadius={80}/>
+      <Blur blur={100} />
+      <Blob clock={clock} shift={1} color={red} baseRadius={50} />
+      <Blob clock={clock} shift={1.3} color={yellow} baseRadius={100} />
+      <Blob clock={clock} shift={0.8} color={blue} baseRadius={80} />
     </Group>
   )
 }

@@ -1,6 +1,6 @@
 import { Dimensions } from "react-native";
 
-export function useGameDimensions(){
+export function useGameDimensions() {
     const { width, height } = Dimensions.get('screen');
     const size = width - 80;
     const radius = size / 2;
@@ -8,5 +8,5 @@ export function useGameDimensions(){
     const centerY = height - radius - 60;
     const hitZoneY = centerY - radius - 20 + 2;
 
-    return {width, height, size, radius, centerX, centerY, hitZoneY}
+    return { width, height, size, radius, centerX, centerY, hitZoneY }
 }

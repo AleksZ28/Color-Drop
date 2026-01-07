@@ -21,26 +21,26 @@ export function useMenuTransition() {
         const currentY = interpolate(gameStarted.value, [0, 1], [menuY, gameY], Extrapolation.CLAMP);
         return [{ translateY: currentY }]
     })
-    
+
     const titleStyle = useAnimatedStyle(() => {
         const centerY = insets.top + 50;
         const topY = insets.top;
-        
+
         const translateY = interpolate(gameStarted.value, [0, 1], [centerY, topY], Extrapolation.CLAMP);
         const scale = interpolate(gameStarted.value, [0, 1], [1, 0.4], Extrapolation.CLAMP);
-        
+
         return {
             transform: [{ translateY }, { scale }],
         }
     })
-    
+
     const startButtonStyle = useAnimatedStyle(() => {
         return {
             opacity: interpolate(gameStarted.value, [0, 1], [1, 0], Extrapolation.CLAMP),
-            zIndex: gameStarted.value > 0.5 ? -1 : 50, 
+            zIndex: gameStarted.value > 0.5 ? -1 : 50,
         }
     });
-    
+
     const HUDStyle = useAnimatedStyle(() => {
         return {
             opacity: interpolate(gameStarted.value, [0.8, 1], [0, 1], Extrapolation.CLAMP),

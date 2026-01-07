@@ -1,6 +1,6 @@
-import React from "react"
+import React from "react";
 
-import { Skia, Path, Group, vec, BlurMask} from "@shopify/react-native-skia"
+import { BlurMask, Group, Path, Skia, vec } from "@shopify/react-native-skia";
 import { SharedValue } from "react-native-reanimated";
 
 const red = "#FF0000";
@@ -15,9 +15,9 @@ interface WheelProps {
   transform: SharedValue<{ rotate: number }[]>
 }
 
-export default function Wheel({radius, centerX, centerY, transform}: WheelProps) {
+export default function Wheel({ radius, centerX, centerY, transform }: WheelProps) {
 
-  const rect = React.useMemo(() => 
+  const rect = React.useMemo(() =>
     Skia.XYWHRect(
       centerX - radius,
       centerY - radius,
@@ -34,14 +34,14 @@ export default function Wheel({radius, centerX, centerY, transform}: WheelProps)
 
   const path1 = React.useMemo(() => {
     const p = Skia.Path.Make();
-    p.addArc(rect, start1Deg ,sweepAngleDeg);
+    p.addArc(rect, start1Deg, sweepAngleDeg);
     return p;
   }, [start1Deg, sweepAngleDeg, rect]);
-  
+
 
   const path2 = React.useMemo(() => {
     const p = Skia.Path.Make();
-    p.addArc(rect, start2Deg ,sweepAngleDeg);
+    p.addArc(rect, start2Deg, sweepAngleDeg);
     return p;
   }, [start2Deg, sweepAngleDeg, rect]);
 
@@ -61,7 +61,7 @@ export default function Wheel({radius, centerX, centerY, transform}: WheelProps)
           color={red}
           strokeWidth={strokeWidth}
         >
-          <BlurMask blur={10}/>
+          <BlurMask blur={10} />
         </Path>
       </Group>
       <Path
@@ -78,7 +78,7 @@ export default function Wheel({radius, centerX, centerY, transform}: WheelProps)
           color={yellow}
           strokeWidth={strokeWidth}
         >
-          <BlurMask blur={10}/>
+          <BlurMask blur={10} />
         </Path>
       </Group>
       <Path
@@ -95,7 +95,7 @@ export default function Wheel({radius, centerX, centerY, transform}: WheelProps)
           color={blue}
           strokeWidth={strokeWidth}
         >
-          <BlurMask blur={10}/>
+          <BlurMask blur={10} />
         </Path>
       </Group>
       <Path

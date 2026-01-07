@@ -1,8 +1,8 @@
+import { FontAwesome } from '@expo/vector-icons';
+import { JSX } from "react";
 import { StyleSheet, Text } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
-import { FontAwesome } from '@expo/vector-icons';
-import { JSX } from "react";
 import { scheduleOnRN } from "react-native-worklets";
 
 interface TutorialOverlayProps {
@@ -11,10 +11,10 @@ interface TutorialOverlayProps {
 }
 
 const steps: { [key: number]: JSX.Element } = {
-    0: (<>Obracaj koło, wykonując na nim okrężny ruch palcem, aby dopasować <Text style={{color:"red"}}>kolor</Text> na kole do <Text style={{color:"red"}}>koloru</Text> kropli.</>),
-    1: (<>Teraz złap <Text style={{color:"yellow"}}>żółty</Text>!</>),
-    2: (<>Świetnie! A teraz ZMIESZAJ KOLORY! Traf między <Text style={{color:"red"}}>czerwony</Text> i <Text style={{color:"yellow"}}>żółty</Text>, aby złapać <Text style={{color:"orange"}}>pomarańczowy</Text>.</>),
-    3: (<>Dobra robota! Gra z czasem będzie przyspieszać, a mieszanie kolorów rozpocznie się po przekroczeniu 100 pkt.<Text>{"\n"}</Text>Masz tylko <Text style={{color:"red"}}>2 życia</Text>, więc uważaj – możesz się pomylić <Text style={{color:"red"}}>tylko raz</Text>!</>)
+    0: (<>Obracaj koło, wykonując na nim okrężny ruch palcem, aby dopasować <Text style={{ color: "red" }}>kolor</Text> na kole do <Text style={{ color: "red" }}>koloru</Text> kropli.</>),
+    1: (<>Teraz złap <Text style={{ color: "yellow" }}>żółty</Text>!</>),
+    2: (<>Świetnie! A teraz ZMIESZAJ KOLORY! Traf między <Text style={{ color: "red" }}>czerwony</Text> i <Text style={{ color: "yellow" }}>żółty</Text>, aby złapać <Text style={{ color: "orange" }}>pomarańczowy</Text>.</>),
+    3: (<>Dobra robota! Gra z czasem będzie przyspieszać, a mieszanie kolorów rozpocznie się po przekroczeniu 100 pkt.<Text>{"\n"}</Text>Masz tylko <Text style={{ color: "red" }}>2 życia</Text>, więc uważaj – możesz się pomylić <Text style={{ color: "red" }}>tylko raz</Text>!</>)
 }
 
 export default function TutorialOverlay({ onHide, step }: TutorialOverlayProps) {
@@ -25,7 +25,7 @@ export default function TutorialOverlay({ onHide, step }: TutorialOverlayProps) 
             scheduleOnRN(onHide);
         })
 
-    function getHint(step: number){
+    function getHint(step: number) {
         return steps[step] ?? "";
     }
 
@@ -34,7 +34,7 @@ export default function TutorialOverlay({ onHide, step }: TutorialOverlayProps) 
         <GestureDetector gesture={tapGesture}>
             <Animated.View key={step} style={styles.container} entering={FadeIn} exiting={FadeOut}>
                 <Text style={styles.text}>{getHint(step)}</Text>
-                <FontAwesome name="hand-pointer-o" size={40} color="#ddd" style={styles.hand}/>
+                <FontAwesome name="hand-pointer-o" size={40} color="#ddd" style={styles.hand} />
                 <Text style={styles.subtext}>Dotknij, aby kontynuować</Text>
             </Animated.View>
         </GestureDetector>

@@ -1,7 +1,7 @@
-import React from "react"
+import React from "react";
 
-import { Skia, Path } from "@shopify/react-native-skia"
-import { SharedValue, useDerivedValue, useSharedValue, withRepeat, withTiming, Easing } from "react-native-reanimated";
+import { Path, Skia } from "@shopify/react-native-skia";
+import { Easing, SharedValue, useDerivedValue, useSharedValue, withRepeat, withTiming } from "react-native-reanimated";
 
 interface DropProps {
     dropX: number;
@@ -10,13 +10,13 @@ interface DropProps {
     dropColor: SharedValue<string>;
 }
 
-export default function Drop({dropX, dropY, dropRadius, dropColor}: DropProps) {
+export default function Drop({ dropX, dropY, dropRadius, dropColor }: DropProps) {
 
     const shake = useSharedValue(0);
 
     React.useEffect(() => {
         shake.value = withRepeat(
-            withTiming(1, { 
+            withTiming(1, {
                 duration: 500,
                 easing: Easing.inOut(Easing.ease),
             }),
@@ -24,7 +24,7 @@ export default function Drop({dropX, dropY, dropRadius, dropColor}: DropProps) {
             true
         );
     }, [shake]);
-    
+
     const animatedPath = useDerivedValue(() => {
         const path = Skia.Path.Make()
         const r = dropRadius
@@ -34,7 +34,7 @@ export default function Drop({dropX, dropY, dropRadius, dropColor}: DropProps) {
         const xr = r + shake.value * (r * 0.2);
         const yr = r - shake.value * (r * 0.2);
 
-        path.moveTo(x,y+yr);
+        path.moveTo(x, y + yr);
         path.cubicTo(
             x + xr, y + yr,
             x + xr, y - yr,
@@ -51,7 +51,7 @@ export default function Drop({dropX, dropY, dropRadius, dropColor}: DropProps) {
         return path;
     })
 
-    return(
+    return (
         <Path path={animatedPath} color={dropColor} />
     )
 

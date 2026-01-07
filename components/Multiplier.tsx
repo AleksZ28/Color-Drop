@@ -3,7 +3,7 @@ import Animated, { interpolateColor, SharedValue, useAnimatedProps, useAnimatedR
 
 const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
 
-interface MultiplierProps{
+interface MultiplierProps {
     multiplier: SharedValue<number>;
     style: TextStyle[];
 }
@@ -11,7 +11,7 @@ interface MultiplierProps{
 const normalColor = "#FFFFFF"
 const highlightColor = "#75dd8dff"
 
-export default function Multiplier ({multiplier, style}: MultiplierProps){
+export default function Multiplier({ multiplier, style }: MultiplierProps) {
 
     const scale = useSharedValue(1);
     const colorProgress = useSharedValue(0);
@@ -19,7 +19,7 @@ export default function Multiplier ({multiplier, style}: MultiplierProps){
     useAnimatedReaction(
         () => multiplier.value,
         (currMultip, prevMultip) => {
-            if(currMultip !== prevMultip) {
+            if (currMultip !== prevMultip) {
                 scale.value = withSequence(
                     withTiming(1.3, { duration: 100 }),
                     withSpring(1)
@@ -37,24 +37,24 @@ export default function Multiplier ({multiplier, style}: MultiplierProps){
     const animatedStyle = useAnimatedStyle(() => {
         const animatedColor = interpolateColor(
             colorProgress.value,
-            [0,1],
+            [0, 1],
             [normalColor, highlightColor]
         )
 
-        return{
+        return {
             transform: [{ scale: scale.value }],
             color: animatedColor
         }
     })
 
     const animatedProps = useAnimatedProps(() => {
-        return { 
+        return {
             text: 'x' + String(multiplier.value),
             defaultValue: 'x' + String(multiplier.value)
         } as any
     });
 
-    return(
-        <AnimatedTextInput editable={false} animatedProps={animatedProps} style={[style, animatedStyle]}/>
+    return (
+        <AnimatedTextInput editable={false} animatedProps={animatedProps} style={[style, animatedStyle]} />
     )
 }

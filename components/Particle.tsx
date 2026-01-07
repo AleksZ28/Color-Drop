@@ -1,27 +1,27 @@
-import React from "react"
-import { Circle, vec, SkPoint, Group, BlurMask } from "@shopify/react-native-skia"
+import { BlurMask, Circle, Group, SkPoint, vec } from "@shopify/react-native-skia";
+import React from "react";
 import { Easing, interpolate, SharedValue, useAnimatedReaction, useDerivedValue, useSharedValue, withTiming } from "react-native-reanimated";
 
 
-interface ParticleProps{
-    position: SharedValue<SkPoint>; 
+interface ParticleProps {
+    position: SharedValue<SkPoint>;
     trigger: SharedValue<boolean>;
     color: SharedValue<string>;
 }
 
-function random(min: number, max: number){
+function random(min: number, max: number) {
     'worklet'
     return Math.random() * (max - min) + min;
-} 
+}
 
-export default function Particle({position, trigger, color}: ParticleProps){
+export default function Particle({ position, trigger, color }: ParticleProps) {
     const progress = useSharedValue(0);
 
     const startX = useSharedValue(0);
     const startY = useSharedValue(0);
     const endX = useSharedValue(0);
     const endY = useSharedValue(0);
-    
+
     useAnimatedReaction(
         () => trigger.value,
         (active) => {
@@ -34,7 +34,7 @@ export default function Particle({position, trigger, color}: ParticleProps){
 
                 progress.value = withTiming(
                     1,
-                    { 
+                    {
                         duration: 600,
                         easing: Easing.out(Easing.ease)
                     },
@@ -70,7 +70,7 @@ export default function Particle({position, trigger, color}: ParticleProps){
                 opacity={0.5}
                 color={color}
             >
-                <BlurMask blur={30}/>
+                <BlurMask blur={30} />
             </Circle>
             <Circle
                 c={animatedPosition}
@@ -79,6 +79,6 @@ export default function Particle({position, trigger, color}: ParticleProps){
                 color={color}
             />
         </Group>
-        
+
     )
 }

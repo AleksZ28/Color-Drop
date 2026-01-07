@@ -12,7 +12,7 @@ interface BlobProps {
 
 export default function Blob({ clock, shift, color, baseRadius }: BlobProps) {
   const { width, height } = useWindowDimensions();
-  const center = vec(width/2, height/2);
+  const center = vec(width / 2, height / 2);
 
   const animatedC = useDerivedValue(() => {
     'worklet';
@@ -27,10 +27,10 @@ export default function Blob({ clock, shift, color, baseRadius }: BlobProps) {
   const animatedR = useDerivedValue(() => {
     'worklet';
     const time = clock.value * 0.001 * shift;
-    return baseRadius + Math.sin(time) * 50; 
+    return baseRadius + Math.sin(time) * 50;
   }, [clock, shift, baseRadius])
 
-  return(
-    <Circle c={animatedC} r={animatedR} color={color}/>
+  return (
+    <Circle c={animatedC} r={animatedR} color={color} />
   )
 }

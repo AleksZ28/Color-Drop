@@ -6,7 +6,7 @@ type StartButtonProps = {
     text: string;
 };
 
-export default function NeonButton({onPress, text}: StartButtonProps){
+export default function NeonButton({ onPress, text }: StartButtonProps) {
     const buttonScale = useSharedValue(1);
     const buttonBorderColor = useSharedValue('rgba(133, 255, 255, 1)');
     const buttonBackgroundColor = useSharedValue('rgba(0, 255, 255, 0.15)');
@@ -19,17 +19,17 @@ export default function NeonButton({onPress, text}: StartButtonProps){
         }
     })
 
-    return(
+    return (
         <Pressable
             onPressIn={() => {
-                buttonScale.value = withTiming(0.9, {duration: 100});
-                buttonBorderColor.value = withTiming('white', {duration: 100});
-                buttonBackgroundColor.value = withTiming('transparent', {duration: 100});
+                buttonScale.value = withTiming(0.9, { duration: 100 });
+                buttonBorderColor.value = withTiming('white', { duration: 100 });
+                buttonBackgroundColor.value = withTiming('transparent', { duration: 100 });
             }}
             onPressOut={() => {
-                buttonScale.value = withTiming(1, {duration: 100});
-                buttonBorderColor.value = withTiming('rgba(133, 255, 255, 1)', {duration: 100});
-                buttonBackgroundColor.value = withTiming('rgba(0, 255, 255, 0.15)', {duration: 100});
+                buttonScale.value = withTiming(1, { duration: 100 });
+                buttonBorderColor.value = withTiming('rgba(133, 255, 255, 1)', { duration: 100 });
+                buttonBackgroundColor.value = withTiming('rgba(0, 255, 255, 0.15)', { duration: 100 });
             }}
             onPress={onPress}
         >
@@ -42,18 +42,18 @@ export default function NeonButton({onPress, text}: StartButtonProps){
 
 const styles = StyleSheet.create({
     button: {
-      paddingVertical: 10,
-      paddingHorizontal: 40,
-      borderStyle: "solid",
-      borderWidth: 4,
-      borderRadius: 15,
-      boxShadow: '0 0 10px 3px rgba(0,255,255,0.4)'
+        paddingVertical: 10,
+        paddingHorizontal: 40,
+        borderStyle: "solid",
+        borderWidth: 4,
+        borderRadius: 15,
+        boxShadow: '0 0 10px 3px rgba(0,255,255,0.4)'
     },
-    
+
     buttonText: {
-      fontSize: 30,
-      fontWeight: 'bold',
-      color: "rgba(200, 249, 249, 1)",
-      letterSpacing: 3
+        fontSize: 30,
+        fontWeight: 'bold',
+        color: "rgba(200, 249, 249, 1)",
+        letterSpacing: 3
     },
 })

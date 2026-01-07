@@ -1,8 +1,8 @@
 import NeonButton from '@/components/NeonButton';
 import { useNeonFlicker } from '@/hooks/useNeonFlicker';
+import { LinearGradient } from 'expo-linear-gradient';
 import { StyleSheet, Text, View } from "react-native";
 import Animated, { FadeIn, FadeOut, SharedValue, SlideInDown, SlideOutDown } from "react-native-reanimated";
-import { LinearGradient } from 'expo-linear-gradient';
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
 
@@ -18,7 +18,7 @@ export default function GameOver({ score, highScore, showMenu }: GameOverMenuPro
 
     return (
         <Animated.View
-            style={ styles.container }
+            style={styles.container}
             entering={FadeIn.duration(500)}
             exiting={FadeOut.duration(500)}
         >
@@ -30,20 +30,20 @@ export default function GameOver({ score, highScore, showMenu }: GameOverMenuPro
                 entering={SlideInDown.springify().damping(40)}
                 exiting={SlideOutDown.duration(200)}
             >
-                
+
                 <Animated.Text style={[styles.title, flickerStyle]}>GAME OVER</Animated.Text>
-                
+
                 <View style={styles.scoreContainer}>
                     <Text style={styles.label}>SCORE</Text>
                     <Text style={styles.score}>{score.value}</Text>
                 </View>
 
-                <View style={[styles.scoreContainer, {marginBottom: 50}]}>
+                <View style={[styles.scoreContainer, { marginBottom: 50 }]}>
                     <Text style={styles.label}>BEST</Text>
                     <Text style={styles.highScore}>{highScore}</Text>
                 </View>
-                
-                <NeonButton onPress={showMenu} text="HOME"/>
+
+                <NeonButton onPress={showMenu} text="HOME" />
             </AnimatedLinearGradient>
         </Animated.View>
     )
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
         fontSize: 50,
         fontWeight: 'bold',
     },
-    
+
     highScore: {
         color: '#FFD700',
         fontSize: 40,
