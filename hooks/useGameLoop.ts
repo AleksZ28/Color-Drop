@@ -1,4 +1,4 @@
-import { baseSpeedValue, buffers, dropColors, dropRadiusValue, livesCount, multiplierThreshold, speedMultiplier, tutorialSequence, tutorialSpeedValue } from "@/constants/gameConfig";
+import { baseSpeedValue, buffers, colorComposition, dropColors, dropRadiusValue, livesCount, multiplierThreshold, speedMultiplier, tutorialSequence, tutorialSpeedValue } from "@/constants/gameConfig";
 import { GameState } from "@/types/types";
 import { triggerHapticSuccess, triggerHapticWarning } from "@/utils/haptics";
 import { vec } from "@shopify/react-native-skia";
@@ -43,6 +43,7 @@ export function useGameLoop(
   const speedResetDone = useSharedValue(false);
 
   const lives = useSharedValue(livesCount);
+  const isBomb = useSharedValue(false);
 
   useEffect(() => {
     if (gameState === 'PLAYING') {
@@ -58,9 +59,11 @@ export function useGameLoop(
       multiplier.value = 1;
       multiplierGapClock.value = 0;
       dropY.value = -50;
+      isBomb.value = false;
       frameCallback.setActive(true);
     } else {
       frameCallback.setActive(false);
+      isBomb.value = false;
     }
 
   }, [gameState]);
@@ -128,46 +131,63 @@ export function useGameLoop(
 
       let correctHit = false;
 
-      buffers.forEach((buffer) => {
-        if (buffer.color == dropColor.value) {
-          const currentRotationDeg = (rotation.value % (2 * Math.PI)) * (180 / Math.PI);
-          const hitAngleDeg = ((270 - currentRotationDeg) % 360 + 360) % 360
+      const currentRotationDeg = (rotation.value % (2 * Math.PI)) * (180 / Math.PI);
+      const hitAngleDeg = ((270 - currentRotationDeg) % 360 + 360) % 360
 
-          const isWrapping = buffer.fromAngleDeg > buffer.toAngleDeg;
+      buffers.forEach(buffer => {
+        let bufferHit = false;
+        const isWrapping = buffer.fromAngleDeg > buffer.toAngleDeg;
 
-          if (!isWrapping) {
-            if (hitAngleDeg >= buffer.fromAngleDeg && hitAngleDeg < buffer.toAngleDeg) {
-              correctHit = true;
-            }
-          } else {
-            if (hitAngleDeg >= buffer.fromAngleDeg || hitAngleDeg < buffer.toAngleDeg) {
-              correctHit = true;
-            }
+        if (!isWrapping) {
+          if (hitAngleDeg >= buffer.fromAngleDeg && hitAngleDeg < buffer.toAngleDeg) {
+            bufferHit = true;
           }
+        } else {
+          if (hitAngleDeg >= buffer.fromAngleDeg || hitAngleDeg < buffer.toAngleDeg) {
+            bufferHit = true;
+          }
+        }
 
-          if (correctHit) {
-            score.value += 1 * multiplier.value;
-            multiplierGapClock.value += 1;
-            if (multiplierGapClock.value === multiplierThreshold) {
-              multiplier.value += 1;
-              multiplierGapClock.value = 0;
+        if (bufferHit) {
+          if (isBomb.value) {
+            const dropColorSet = colorComposition[dropColor.value] || [];
+            const bufferColorSet = colorComposition[buffer.color] || [];
+            const hasIntersection = dropColorSet.some(c => bufferColorSet.includes(c));
+
+            if (hasIntersection) {
+              correctHit = false;
+            } else {
+              correctHit = true;
             }
-            splashColor.value = dropColor.value
-            splashPosition.value = vec(dropX, hitZoneY);
-            splashTrigger.value = true;
-            scheduleOnRN(triggerHapticSuccess);
           } else {
-            lives.value -= 1;
-
-            if (lives.value === 0) {
-              scheduleOnRN(onGameOver, score.value);
+            if (buffer.color == dropColor.value) {
+              correctHit = true;
             }
-
-            triggerBadHitEffect();
-            scheduleOnRN(triggerHapticWarning);
           }
         }
       })
+
+      if (correctHit) {
+        score.value += 1 * multiplier.value;
+        multiplierGapClock.value += 1;
+        if (multiplierGapClock.value === multiplierThreshold) {
+          multiplier.value += 1;
+          multiplierGapClock.value = 0;
+        }
+        splashColor.value = dropColor.value
+        splashPosition.value = vec(dropX, hitZoneY);
+        splashTrigger.value = true;
+        scheduleOnRN(triggerHapticSuccess);
+      } else {
+        lives.value -= 1;
+
+        if (lives.value === 0) {
+          scheduleOnRN(onGameOver, score.value);
+        }
+
+        triggerBadHitEffect();
+        scheduleOnRN(triggerHapticWarning);
+      }
 
       if (isTutorialActive) {
         if (correctHit) {
@@ -189,9 +209,15 @@ export function useGameLoop(
         } else {
           dropColor.value = dropColors[Math.floor(Math.random() * 3)];
         }
+
+        if (score.value > 200 && Math.random() < 0.3) {
+          isBomb.value = true;
+        } else {
+          isBomb.value = false;
+        }
       }
     }
   })
 
-  return { dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, buffers, multiplier, triggerBadHitEffect }
+  return { dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, buffers, multiplier, triggerBadHitEffect, isBomb }
 } 

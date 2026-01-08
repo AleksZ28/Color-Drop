@@ -27,7 +27,7 @@ import * as Linking from 'expo-linking';
 import React, { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text } from 'react-native';
 import { GestureDetector, GestureHandlerRootView } from 'react-native-gesture-handler';
-import Animated, { useAnimatedReaction, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { interpolateColor, useAnimatedReaction, useAnimatedStyle, useSharedValue, withRepeat, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
 
 function Game() {
@@ -115,7 +115,7 @@ function Game() {
     AsyncStorage.setItem('has_played_before', 'true');
   }
 
-  const { dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier } = useGameLoop(rotation, clock, score, onGameOver, gameState, isTutorialActive, handleSetIsTutorialActiveToFalse, handleTutorialStep, tutorialStep, isPaused);
+  const { dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier, isBomb } = useGameLoop(rotation, clock, score, onGameOver, gameState, isTutorialActive, handleSetIsTutorialActiveToFalse, handleTutorialStep, tutorialStep, isPaused);
 
   const shakeAnimatedStyle = useShakeEffect(shakeX, shakeY);
   const flickerStyle = useNeonFlicker();
@@ -139,6 +139,30 @@ function Game() {
       }
     }
   );
+
+  const bombIntensity = useSharedValue(0);
+
+  useAnimatedReaction(
+    () => isBomb.value,
+    (isBombActive) => {
+      if (isBombActive) {
+        bombIntensity.value = withRepeat(withTiming(1, { duration: 500 }), -1, true);
+      } else {
+        bombIntensity.value = withTiming(0, { duration: 500 });
+      }
+    }
+  );
+
+  const horrorBackgroundStyle = useAnimatedStyle(() => {
+    const backgroundColor = interpolateColor(
+      bombIntensity.value,
+      [0, 1],
+      ['#20202aff', '#4f4f4fff']
+    );
+    return {
+      backgroundColor,
+    };
+  });
 
 
   return (
@@ -165,7 +189,7 @@ function Game() {
 
       {
         fontLoaded && (
-          <Animated.View style={[styles.container, shakeAnimatedStyle]}>
+          <Animated.View style={[styles.container, shakeAnimatedStyle, horrorBackgroundStyle]}>
 
             <Animated.View style={[styles.hud, HUDStyle]}>
               <ScoreCounter score={score} style={styles.score} />
@@ -188,6 +212,7 @@ function Game() {
                   dropY={dropY}
                   dropRadius={dropRadius}
                   dropColor={dropColor}
+                  isBomb={isBomb}
                 />
                 {particles.map((i) => (
                   <Particle

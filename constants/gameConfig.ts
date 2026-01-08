@@ -1,5 +1,14 @@
 export const dropColors = ["#FF0000", "#FFFF00", "#0000FF", "#FF8000", "#00FF00", "#FF00FF"];
 
+export const colorComposition: { [key: string]: string[] } = {
+  "#FF0000": ["red"],
+  "#FFFF00": ["yellow"],
+  "#0000FF": ["blue"],
+  "#FF8000": ["red", "yellow"],
+  "#00FF00": ["yellow", "blue"],
+  "#FF00FF": ["red", "blue"]
+};
+
 export const tutorialSequence = ["#FF0000", "#FFFF00", "#FF8000", "#0000FF"];
 
 export const buffers = [
