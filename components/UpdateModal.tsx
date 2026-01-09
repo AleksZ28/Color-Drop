@@ -1,7 +1,7 @@
 import { useNeonFlicker } from "@/hooks/useNeonFlicker";
 import { LinearGradient } from "expo-linear-gradient";
 import { StyleSheet, View } from "react-native";
-import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import SettingsButton from "./SettingsButton";
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
@@ -26,8 +26,6 @@ export default function UpdateModal({ onDownload, onCancel }: UpdateModalProps) 
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.card}
-                entering={SlideInDown.springify().damping(40)}
-                exiting={SlideOutDown.duration(200)}
             >
 
                 <Animated.Text style={[styles.title, flickerStyle]}>Dostępna jest nowa wersja!</Animated.Text>

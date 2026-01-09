@@ -4,7 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import PagerView from "react-native-pager-view";
-import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut } from "react-native-reanimated";
 import SettingsButton from "./SettingsButton";
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
@@ -29,8 +29,6 @@ export default function WhatsNewModal({ data, onClose }: WhatsNewModalProps) {
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.card}
-                entering={SlideInDown.springify().damping(40)}
-                exiting={SlideOutDown.duration(200)}
             >
                 <Animated.Text style={[styles.mainTitle, flickerStyle]}>Co nowego?</Animated.Text>
 
