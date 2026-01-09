@@ -26,7 +26,7 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/color-drop-icon.png",
-          "imageWidth": 512,
+          "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff",
           "dark": {
