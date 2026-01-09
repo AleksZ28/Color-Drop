@@ -134,7 +134,7 @@ export function useGameLoop(
       const currentRotationDeg = (rotation.value % (2 * Math.PI)) * (180 / Math.PI);
       const hitAngleDeg = ((270 - currentRotationDeg) % 360 + 360) % 360
 
-      buffers.forEach(buffer => {
+      for (const buffer of buffers) {
         let bufferHit = false;
         const isWrapping = buffer.fromAngleDeg > buffer.toAngleDeg;
 
@@ -152,7 +152,17 @@ export function useGameLoop(
           if (isBomb.value) {
             const dropColorSet = colorComposition[dropColor.value] || [];
             const bufferColorSet = colorComposition[buffer.color] || [];
-            const hasIntersection = dropColorSet.some(c => bufferColorSet.includes(c));
+
+            let hasIntersection = false;
+
+            if (dropColorSet.length > 1) {
+              hasIntersection = dropColorSet.some(c => bufferColorSet.includes(c));
+            } else {
+              if (bufferColorSet.length > 1) {
+                continue
+              }
+              hasIntersection = dropColorSet[0] == bufferColorSet[0];
+            }
 
             if (hasIntersection) {
               correctHit = false;
@@ -165,7 +175,7 @@ export function useGameLoop(
             }
           }
         }
-      })
+      }
 
       if (correctHit) {
         score.value += 1 * multiplier.value;
