@@ -1,5 +1,7 @@
 # 🔴 🟡 🔵 Color Drop 🔵 🟡 🔴
 
+> New update is described in release section. README is not updated yet.
+
 Minimalist reflex game built with React Native, using Reanimated and Skia, running in the Expo environment.
 
 ## Game description
