@@ -14,7 +14,7 @@ function random(min: number, max: number) {
     return Math.random() * (max - min) + min;
 }
 
-export default function Particle({ position, trigger, color }: ParticleProps) {
+function Particle({ position, trigger, color }: ParticleProps) {
     const progress = useSharedValue(0);
 
     const startX = useSharedValue(0);
@@ -82,3 +82,5 @@ export default function Particle({ position, trigger, color }: ParticleProps) {
 
     )
 }
+
+export default React.memo(Particle)

@@ -15,32 +15,38 @@ export const buffers = [
   {
     color: "#FF0000",
     fromAngleDeg: 0,
-    toAngleDeg: 120
+    toAngleDeg: 120,
+    colorSet: colorComposition["#FF0000"]
   },
   {
     color: "#FFFF00",
     fromAngleDeg: 120,
-    toAngleDeg: 240
+    toAngleDeg: 240,
+    colorSet: colorComposition["#FFFF00"]
   },
   {
     color: "#0000FF",
     fromAngleDeg: 240,
-    toAngleDeg: 360
+    toAngleDeg: 360,
+    colorSet: colorComposition["#0000FF"]
   },
   {
     color: "#FF8000",
     fromAngleDeg: 100,
-    toAngleDeg: 140
+    toAngleDeg: 140,
+    colorSet: colorComposition["#FF8000"]
   },
   {
     color: "#00FF00",
     fromAngleDeg: 220,
-    toAngleDeg: 260
+    toAngleDeg: 260,
+    colorSet: colorComposition["#00FF00"]
   },
   {
     color: "#FF00FF",
     fromAngleDeg: 340,
-    toAngleDeg: 20
+    toAngleDeg: 20,
+    colorSet: colorComposition["#FF00FF"]
   }
 ]
 

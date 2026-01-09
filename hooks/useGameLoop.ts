@@ -151,7 +151,7 @@ export function useGameLoop(
         if (bufferHit) {
           if (isBomb.value) {
             const dropColorSet = colorComposition[dropColor.value] || [];
-            const bufferColorSet = colorComposition[buffer.color] || [];
+            const bufferColorSet = buffer.colorSet || [];
 
             let hasIntersection = false;
 
