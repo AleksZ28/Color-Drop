@@ -193,6 +193,13 @@ export function useGameLoop(
         if (correctHit) {
           if (tutorialStep < tutorialSequence.length - 1) {
             dropColor.value = tutorialSequence[tutorialStep + 1];
+
+            if (tutorialStep == 2) {
+              isBomb.value = true;
+            } else {
+              isBomb.value = false;
+            }
+
             scheduleOnRN(onTutorialStep);
           } else {
             dropColor.value = dropColors[Math.floor(Math.random() * 3)];

@@ -9,7 +9,7 @@ export const colorComposition: { [key: string]: string[] } = {
   "#FF00FF": ["red", "blue"]
 };
 
-export const tutorialSequence = ["#FF0000", "#FFFF00", "#FF8000", "#0000FF"];
+export const tutorialSequence = ["#FF0000", "#FFFF00", "#FF8000", "#0000FF", "#0000FF"];
 
 export const buffers = [
   {
