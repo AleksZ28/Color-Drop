@@ -4,7 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import { Image, StyleSheet, Text, View } from "react-native";
 import PagerView from "react-native-pager-view";
-import Animated, { SlideInDown, SlideOutDown } from "react-native-reanimated";
+import Animated, { FadeIn, FadeOut, SlideInDown, SlideOutDown } from "react-native-reanimated";
 import SettingsButton from "./SettingsButton";
 
 const AnimatedLinearGradient = Animated.createAnimatedComponent(LinearGradient);
@@ -19,7 +19,11 @@ export default function WhatsNewModal({ data, onClose }: WhatsNewModalProps) {
     const [currentPage, setCurrentPage] = useState(0);
 
     return (
-        <Animated.View style={styles.container}>
+        <Animated.View
+            style={styles.container}
+            entering={FadeIn.duration(500)}
+            exiting={FadeOut.duration(500)}
+        >
             <AnimatedLinearGradient
                 colors={['#121212ff', '#2b241bff', '#3c3226ff', '#2b2920ff']}
                 start={{ x: 0, y: 0 }}

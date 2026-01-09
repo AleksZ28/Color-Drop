@@ -66,9 +66,7 @@ function Game() {
 
         if (isNewerVersion(currentVersion, data.latest)) {
           setUpdateUrl(data.url);
-          setTimeout(() => {
-            setUpdateModalVisible(true);
-          }, 500);
+          setUpdateModalVisible(true);
         }
       } catch (e) {
         console.error(e);
@@ -88,9 +86,7 @@ function Game() {
           const lastSeenVersion = await AsyncStorage.getItem('last_seen_version');
 
           if (lastSeenVersion != currentVersion) {
-            setTimeout(() => {
-              setWhatsNewVisible(true);
-            }, 500);
+            setWhatsNewVisible(true);
           }
         }
 
