@@ -210,7 +210,7 @@ export function useGameLoop(
           dropColor.value = dropColors[Math.floor(Math.random() * 3)];
         }
 
-        if (score.value > 200 && Math.random() < 0.3) {
+        if (score.value > 100 && Math.random() < 0.3) {
           isBomb.value = true;
         } else {
           isBomb.value = false;

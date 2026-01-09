@@ -7,8 +7,10 @@ import Particle from "@/components/Particle";
 import ScoreCounter from "@/components/ScoreCounter";
 import TutorialOverlay from "@/components/TutorialOverlay";
 import UpdateModal from "@/components/UpdateModal";
+import WhatsNewModal from "@/components/WhatsNewModal";
 import Wheel from '@/components/Wheel';
 import { UPDATE_API_URL } from "@/constants/gameConfig";
+import { whatsNewData } from "@/constants/whatsNew";
 import { useGameDimensions } from "@/hooks/useGameDimensions";
 import { useGameLoop } from "@/hooks/useGameLoop";
 import { useMenuTransition } from "@/hooks/useMenuTransition";
@@ -47,6 +49,7 @@ function Game() {
 
   const [updateModalVisible, setUpdateModalVisible] = useState(false);
   const [updateUrl, setUpdateUrl] = useState("");
+  const [whatsNewVisible, setWhatsNewVisible] = useState(false);
 
   useEffect(() => {
     const checkUpdate = async () => {
@@ -74,10 +77,19 @@ function Game() {
     const initApp = async () => {
       try {
         const hasPlayed = await AsyncStorage.getItem('has_played_before');
+        const currentVersion = Constants.expoConfig?.version || "1.0.0";
         if (hasPlayed === null) {
           setIsTutorialActive(true);
           setIsPaused(true)
+          await AsyncStorage.setItem('last_seen_version', currentVersion);
+        } else {
+          const lastSeenVersion = await AsyncStorage.getItem('last_seen_version');
+
+          if (lastSeenVersion != currentVersion) {
+            setWhatsNewVisible(true);
+          }
         }
+
         const highScoreFromStorage = await getHighScore();
         setHighScore(highScoreFromStorage);
       } catch (e) {
@@ -114,6 +126,12 @@ function Game() {
     setIsTutorialActive(false);
     AsyncStorage.setItem('has_played_before', 'true');
   }
+
+  const handleWhatsNewClose = async () => {
+    setWhatsNewVisible(false);
+    const currentVersion = Constants.expoConfig?.version || "1.0.0";
+    await AsyncStorage.setItem('last_seen_version', currentVersion);
+  };
 
   const { dropY, dropX, dropRadius, dropColor, shakeX, shakeY, splashTrigger, splashPosition, splashColor, particles, multiplier, isBomb } = useGameLoop(rotation, clock, score, onGameOver, gameState, isTutorialActive, handleSetIsTutorialActiveToFalse, handleTutorialStep, tutorialStep, isPaused);
 
@@ -183,6 +201,15 @@ function Game() {
               if (updateUrl) Linking.openURL(updateUrl);
             }}
             onCancel={() => setUpdateModalVisible(false)}
+          />
+        )
+      }
+
+      {
+        whatsNewVisible && fontLoaded && !updateModalVisible && (
+          <WhatsNewModal
+            data={whatsNewData}
+            onClose={handleWhatsNewClose}
           />
         )
       }
